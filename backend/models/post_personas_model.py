@@ -16,7 +16,7 @@ class PersonaModel:
             content = {}
         return data
 
-    def get_users(self):  
+    def get_personas(self):  
         rv = self.post_pool.execute("SELECT * from personas")  
         data = []
         content = {}
@@ -52,7 +52,7 @@ class PersonaModel:
             'correo_institucional': correo_institucional,
             'password': password
         }  
-        query = """update users set nombres = %(nombres)s, apellido_paterno = %(apellido_paterno)s,
+        query = """update personas set nombres = %(nombres)s, apellido_paterno = %(apellido_paterno)s,
                     apellido_materno = %(apellido_materno)s, fecha_nacimiento = %(fecha_nacimiento)s,
                     correo_institucional = %(correo_institucional)s, password = %(password)s where dni = %(dni)s"""    
         cursor = self.post_pool.execute(query, data, commit=True)   

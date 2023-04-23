@@ -4,12 +4,12 @@ from flask import jsonify
 from flask import render_template
 from flask_cors import CORS, cross_origin 
 
-#from backend.blueprints.task_blueprint import task_blueprint
+from backend.blueprints.personas_blueprint import personas_blueprint
 #from backend.blueprints.user_blueprint import user_blueprint
 
 app = Flask(__name__)
 
-#app.register_blueprint(task_blueprint)
+app.register_blueprint(personas_blueprint)
 #app.register_blueprint(user_blueprint)
 
 cors = CORS(app)
