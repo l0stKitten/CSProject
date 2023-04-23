@@ -6,7 +6,7 @@ class AlumnoModel:
 
     def get_alumno(self, persona_dni):    
         params = {'dni' : persona_dni}      
-        rv = self.post_pool.execute("SELECT p.dni, p.nombres, p.apellido_paterno, p.apellido_materno, p.fecha_nacimiento, p.correo_institucional from personas p inner join alumnos a on a.dni = p.dni where dni=%(dni)s", params)                
+        rv = self.post_pool.execute("SELECT p.dni, p.nombres, p.apellido_paterno, p.apellido_materno, p.fecha_nacimiento, p.correo_institucional from personas p inner join alumnos a on a.dni = p.dni where a.dni=%(dni)s", params)                
         data = []
         content = {}
         for result in rv:
@@ -27,7 +27,7 @@ class AlumnoModel:
             content = {}
         return data
 
-    def create_alumno(self, dni, nombres, apellido_paterno, apellido_materno, fecha_nacimiento, correo_institucional, password):    
+    def create_alumno(self, dni):    
         data = {
             'dni' : dni
         }  
