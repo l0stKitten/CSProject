@@ -6,11 +6,11 @@ config = configparser.ConfigParser()
 config.read("C:/Users/USUARIO/Documents/postgres_config.ini")
 
 dbconfig = {
-    "host":config.get('postgres', 'host'),
-    "port":config.get('postgres', 'port'),
-    "user":config.get('postgres', 'user'),
-    "password":config.get('postgres', 'pass'),
-    "database":config.get('postgres', 'database'),
+    "host":config.get('postgresql', 'host'),
+    "port":config.get('postgresql', 'port'),
+    "user":config.get('postgresql', 'user'),
+    "password":config.get('postgresql', 'pass'),
+    "database":config.get('postgresql', 'database'),
 }
 
 class PostgreSQLPool(object):
@@ -98,8 +98,8 @@ class PostgreSQLPool(object):
 
 if __name__ == "__main__":
     postgres_pool = PostgreSQLPool()
-    #sql = "select * from tasks"        
-    #rv = postgres_pool.execute(sql)
-    #for result in rv:
-        #print(result)
+    sql = "select * from tasks"        
+    rv = postgres_pool.execute(sql)
+    for result in rv:
+        print(result)
     print("done")
