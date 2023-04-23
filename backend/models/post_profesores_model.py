@@ -6,7 +6,7 @@ class ProfesorModel:
 
     def get_profesor(self, persona_dni):    
         params = {'dni' : persona_dni}      
-        rv = self.post_pool.execute("SELECT p.dni, p.nombres, p.apellido_paterno, p.apellido_materno, p.fecha_nacimiento, p.correo_institucional, p2.especialidad from personas p inner join profesores p2 on p2.dni = p.dni where dni=%(dni)s", params)                
+        rv = self.post_pool.execute("SELECT p.dni, p.nombres, p.apellido_paterno, p.apellido_materno, p.fecha_nacimiento, p.correo_institucional, p2.especialidad from personas p inner join profesores p2 on p2.dni = p.dni where p2.dni=%(dni)s", params)                
         data = []
         content = {}
         for result in rv:
@@ -22,7 +22,7 @@ class ProfesorModel:
         content = {}
         for result in rv:
             content = {'dni': result[0], 'nombres': result[1], 'apellido_paterno': result[2], 'apellido_materno': result[3], 
-                         'fecha_nacimiento': result[4],  'correo_institucional': result[5],  'especialidad': especialidad[6]}
+                         'fecha_nacimiento': result[4],  'correo_institucional': result[5],  'especialidad': result[6]}
             data.append(content)
             content = {}
         return data
@@ -42,16 +42,16 @@ class ProfesorModel:
             'especialidad': especialidad
         }  
          
-        query = """update profesores set nombrespecialidades = %(especialidad)s where dni = %(dni)s"""    
+        query = """update profesores set especialidad = %(especialidad)s where dni = %(dni)s"""    
         cursor = self.post_pool.execute(query, data, commit=True)
 
         result = {'result':1} 
         return result
 
-    def delete_alumno(self, dni):    
+    def delete_profesor(self, dni):    
         params = {'dni' : dni}      
 
-        query = """delete from alumnos where dni = %(dni)s"""    
+        query = """delete from profesores where dni = %(dni)s"""    
         self.post_pool.execute(query, params, commit=True) 
 
         result = {'result': 1}
