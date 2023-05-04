@@ -15,7 +15,7 @@ profesores_blueprint = Blueprint('profesores_blueprint', __name__)
 
 @profesores_blueprint.route('/profesor', methods=['PUT'])
 @cross_origin()
-def create_persona():
+def create_profesor():
     content = model.create_profesor(request.json['dni'], request.json['especialidad'])    
     return jsonify(content)
 

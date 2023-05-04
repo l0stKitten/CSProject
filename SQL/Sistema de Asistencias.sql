@@ -18,7 +18,8 @@ CREATE TABLE "alumnos" (
 );
 
 CREATE TABLE "administradores" ( --10 personas
-	"dni" varchar(8) PRIMARY KEY
+	"dni" varchar(8) PRIMARY KEY,
+	"cargo" varchar(40)
 );
 
 CREATE TABLE "asignaturas" (
