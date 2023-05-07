@@ -6,56 +6,67 @@ class JustificacionModel:
 
     def get_justificacion(self, codigo_justificacion):    
         params = {'codigo' : codigo_justificacion}      
-        rv = self.post_pool.execute("SELECT j.codigo, a.codigo, a.fecha_asistencia, CONCAT(p.nombres, ' ', p.apellido_paterno, ' ', p.apellido_materno), j.titulo, j.descripcion,  from justificaciones j inner join asistencias a on j.asistencia = a.codigo inner join matriculas m on a.matricula = m.codigo inner join alumno a2 on a2.dni = m.alumno inner join personas p on p.dni = a.dni where j.codigo=%(codigo)s", params)                
+        rv = self.post_pool.execute("""SELECT j.codigo, a.codigo as asis_code, a.fecha_asistencia, CONCAT(p.nombres, ' ', p.apellido_paterno, ' ', p.apellido_materno) as full_name, j.titulo, j.descripcion from justificaciones j 
+                                        inner join asistencias a on j.asistencia = a.codigo 
+                                        inner join matriculas m on a.matricula = m.codigo 
+                                        inner join alumno a2 on a2.dni = m.alumno 
+                                        inner join personas p on p.dni = a.dni where j.codigo=%(codigo)s""", params)                
         data = []
         content = {}
         for result in rv:
-            content = {'dni': result[0], 'nombres': result[1], 'apellido_paterno': result[2], 'apellido_materno': result[3], 
-                         'fecha_nacimiento': result[4],  'correo_institucional': result[5]}
+            content = {'codigo': result[0], 'asis_code': result[1], 'fecha_asistencia': result[2], 'full_name': result[3], 
+                         'titulo': result[4],  'descripcion': result[5]}
             data.append(content)
             content = {}
         return data
 
     def get_justificaciones(self):  
-        rv = self.post_pool.execute("SELECT p.dni, p.nombres, p.apellido_paterno, p.apellido_materno, p.fecha_nacimiento, p.correo_institucional from personas p inner join alumnos a on a.dni = p.dni ;")  
+        rv = self.post_pool.execute("""SELECT j.codigo, a.codigo as asis_code, a.fecha_asistencia, CONCAT(p.nombres, ' ', p.apellido_paterno, ' ', p.apellido_materno) as full_name, j.titulo, j.descripcion from justificaciones j 
+                                        inner join asistencias a on j.asistencia = a.codigo 
+                                        inner join matriculas m on a.matricula = m.codigo 
+                                        inner join alumno a2 on a2.dni = m.alumno 
+                                        inner join personas p on p.dni = a.dni""", params)                
         data = []
         content = {}
         for result in rv:
-            content = {'dni': result[0], 'nombres': result[1], 'apellido_paterno': result[2], 'apellido_materno': result[3], 
-                         'fecha_nacimiento': result[4],  'correo_institucional': result[5]}
+            content = {'codigo': result[0], 'asis_code': result[1], 'fecha_asistencia': result[2], 'full_name': result[3], 
+                         'titulo': result[4],  'descripcion': result[5]}
             data.append(content)
             content = {}
         return data
 
-    def create_justificacion(self, dni):    
+    def create_justificacion(self, asistencia, titulo, descripcion, archivo):    
         data = {
-            'dni' : dni
+            'codigo' : codigo_justificacion,
+            'asistencia' : asistencia,
+            'titulo' : titulo,
+            'descripcion' : descripcion,
+            'archivo' : archivo
         }  
-        query = """insert into alumnos (dni) values (%(dni)s)"""    
+        query = """insert into justificaciones (asistencia, titulo, descripcion, archivo) values (%(asistencia)s, %(titulo)s, %(descripcion)s, %(archivo)s)"""    
         cursor = self.post_pool.execute(query, data, commit=True)  
         return data
 
-    def update_justificacion(self, dni, nombres, apellido_paterno, apellido_materno, fecha_nacimiento, correo_institucional, password):    
+    def update_justificacion(self, codigo_justificacion, asistencia, titulo, descripcion, archivo):    
         data = {
-            'dni' : dni,
-            'nombres' : nombres,
-            'apellido_paterno': apellido_paterno,
-            'apellido_materno': apellido_materno,
-            'fecha_nacimiento': fecha_nacimiento,
-            'correo_institucional': correo_institucional,
-            'password': password
-        }  
-         
-        pm = PersonaModel()
-        pm.update_persona(dni, nombres, apellido_paterno, apellido_materno, fecha_nacimiento, correo_institucional, password)
+            'codigo' : codigo_justificacion,
+            'asistencia' : asistencia,
+            'titulo' : titulo,
+            'descripcion' : descripcion,
+            'archivo' : archivo
+        }
+
+        query = """update justificaciones set asistencia = %(asistencia)s, titulo = %(titulo)s,
+                    descripcion = %(descripcion)s, archivo = %(archivo)s where codigo = %(codigo)s"""    
+        cursor = self.post_pool.execute(query, data, commit=True)   
 
         result = {'result':1} 
         return result
 
-    def delete_justificacion(self, dni):    
-        params = {'dni' : dni}      
+    def delete_justificacion(self, codigo_justificacion):    
+        params = {'codigo' : codigo_justificacion}      
 
-        query = """delete from alumnos where dni = %(dni)s"""    
+        query = """delete from justificaciones where codigo = %(codigo)s"""    
         self.post_pool.execute(query, params, commit=True) 
 
         result = {'result': 1}
