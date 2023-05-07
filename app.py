@@ -16,6 +16,7 @@ from backend.blueprints.cursos_blueprint import cursos_blueprint
 from backend.blueprints.dictados_blueprint import dictados_blueprint
 from backend.blueprints.participaciones_blueprint import participaciones_blueprint
 from backend.blueprints.asistencias_blueprint import asistencias_blueprint
+from backend.blueprints.matriculas_blueprint import matriculas_blueprint
 
 app = Flask(__name__)
 
@@ -31,6 +32,7 @@ app.register_blueprint(cursos_blueprint)
 app.register_blueprint(dictados_blueprint)
 app.register_blueprint(participaciones_blueprint)
 app.register_blueprint(asistencias_blueprint)
+app.register_blueprint(matriculas_blueprint)
 
 cors = CORS(app)
 

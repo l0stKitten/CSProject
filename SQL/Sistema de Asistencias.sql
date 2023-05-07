@@ -87,7 +87,7 @@ create table "justificaciones" (
 );
 
 CREATE TABLE "participaciones" (
-	"asistencia" integer not null,
+	"asistencia" integer primary KEY not null,
 	"cantidad" integer
 );
 
