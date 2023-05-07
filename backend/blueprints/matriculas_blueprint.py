@@ -10,32 +10,32 @@ from backend.models.post_matriculas_model import MatriculaModel
 model = MatriculaModel()
 
 
-matriculas_blueprint = Blueprint('horarios_blueprint', __name__)
+matriculas_blueprint = Blueprint('matriculas_blueprint', __name__)
 
 
-@horarios_blueprint.route('/matricula', methods=['PUT'])
+@matriculas_blueprint.route('/matricula', methods=['PUT'])
 @cross_origin()
 def create_matricula():
     content = model.create_matricula(request.json['alumno'], request.json['curso'], request.json['estado'])    
     return jsonify(content)
 
-@horarios_blueprint.route('/matricula', methods=['PATCH'])
+@matriculas_blueprint.route('/matricula', methods=['PATCH'])
 @cross_origin()
 def update_matricula():
     content = model.update_matricula(request.json['codigo'], request.json['alumno'], request.json['curso'], request.json['estado'])    
     return jsonify(content)
 
-@horarios_blueprint.route('/matricula', methods=['DELETE'])
+@matriculas_blueprint.route('/matricula', methods=['DELETE'])
 @cross_origin()
 def delete_matricula():
     return jsonify(model.delete_matricula(request.json['codigo']))
 
-@horarios_blueprint.route('/matricula', methods=['POST'])
+@matriculas_blueprint.route('/matricula', methods=['POST'])
 @cross_origin()
 def get_matricula():
     return jsonify(model.get_matricula(request.json['codigo']))
 
-@horarios_blueprint.route('/matriculas', methods=['POST'])
+@matriculas_blueprint.route('/matriculas', methods=['POST'])
 @cross_origin()
 def get_matriculas():
     return jsonify(model.get_matriculas())
