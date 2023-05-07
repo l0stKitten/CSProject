@@ -82,7 +82,7 @@ create table "justificaciones" (
 	(start with 1 increment by 1),
 	"asistencia" integer not null,
 	"titulo" varchar(100),
-	"descripción" varchar(500) not null,
+	"descripcion" varchar(500) not null,
 	"archivo" BYTEA
 );
 

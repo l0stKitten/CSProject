@@ -6,7 +6,7 @@ from werkzeug.utils import secure_filename
 import json
 from flask_cors import CORS, cross_origin 
 
-from backend.models.post_salones_model import MatriculaModel
+from backend.models.post_matriculas_model import MatriculaModel
 model = MatriculaModel()
 
 

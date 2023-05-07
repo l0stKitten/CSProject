@@ -6,7 +6,7 @@ from werkzeug.utils import secure_filename
 import json
 from flask_cors import CORS, cross_origin 
 
-from backend.models.post_salones_model import HorarioModel
+from backend.models.post_horarios_model import HorarioModel
 model = HorarioModel()
 
 
