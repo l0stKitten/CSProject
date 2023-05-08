@@ -1,4 +1,7 @@
 from backend.models.post_connection_pool import PostgreSQLPool
+import cv2
+import numpy as np
+import requests
 
 class AsistenciaModel:
     def __init__(self):        
@@ -25,10 +28,10 @@ class AsistenciaModel:
     def get_asistencias(self):  
         rv = self.post_pool.execute("""SELECT a.codigo, a.estado, a.fecha_asistencia, CONCAT(p.nombres, ' ', p.apellido_paterno, ' ', p.apellido_materno) as full_name, a3.nombre from asistencias a 
                                         inner join  matriculas m on a.matricula = m.codigo
-                                        inner join alumno a2 on a2.dni = m.alumno
+                                        inner join alumnos a2 on a2.dni = m.alumno
                                         inner join personas p on p.dni = a2.dni
                                         inner join cursos c on c.codigo = m.curso
-                                        inner join asignaturas a3 on a3.codigo = c.asignatura""", params)              
+                                        inner join asignaturas a3 on a3.codigo = c.asignatura""")              
         data = []
         content = {}
         for result in rv:
@@ -38,7 +41,32 @@ class AsistenciaModel:
             content = {}
         return data
 
-    def create_asistencia(self, estado, fecha_asistencia, matricula):    
+    def create_asistencia(self, path, fecha_asistencia, matricula, dni):    
+        #tomar una imagen
+        endpoint_url = "http://127.0.0.1:81/openfaceAPI"
+        f = {"file": open("{}".format(path), "rb")}
+        vec = requests.post(endpoint_url, files=f) 
+        res = vec.json()
+        vector1 = res["result"].replace('[', '').replace(']', '').split()
+        vector11 = [float(numeric_string) for numeric_string in vector1]
+        print("vector 11 ", vector11)
+
+        #llamamos para obtener el vector del alumno ya guardado
+        endpoint_url = "http://127.0.0.1:5000/persona"
+        vec2 = requests.post(endpoint_url, json={"dni": dni})
+        res2 = vec2.json()
+        vect2 = res2[0]
+        vector2 = vect2["vector"].replace('[', '').replace(']', '').split()
+        vector22 = [float(numeric_string) for numeric_string in vector2]
+        print("vector 22 ",vector22)
+        #comparar la imagen con la del guardado
+        distancia = np.linalg.norm(np.array(vector11) - np.array(vector22))
+
+        #cambiar el estado
+        estado = False
+        if distancia < 0.64 :
+            estado = True
+
         data = {
             'estado' : estado,
             'fecha_asistencia' : fecha_asistencia,

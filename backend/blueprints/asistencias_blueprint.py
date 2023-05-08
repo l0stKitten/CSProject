@@ -16,13 +16,13 @@ asistencias_blueprint = Blueprint('asistencias_blueprint', __name__)
 @asistencias_blueprint.route('/asistencia', methods=['PUT'])
 @cross_origin()
 def create_asistencia():
-    content = model.create_asistencia(request.json['asistencia'], request.json['titulo'], request.json['descripcion'], request.json['archivo'])    
+    content = model.create_asistencia(request.json['path'], request.json['fecha_asistencia'], request.json['matricula'], request.json['dni'])    
     return jsonify(content)
 
 @asistencias_blueprint.route('/asistencia', methods=['PATCH'])
 @cross_origin()
 def update_asistencia():
-    content = model.update_asistencia(request.json['codigo'], request.json['asistencia'], request.json['titulo'], request.json['descripcion'], request.json['archivo'])    
+    content = model.update_asistencia(request.json['codigo'], request.json['estado'], request.json['fecha_asistencia'], request.json['matricula'])    
     return jsonify(content)
 
 @asistencias_blueprint.route('/asistencia', methods=['DELETE'])

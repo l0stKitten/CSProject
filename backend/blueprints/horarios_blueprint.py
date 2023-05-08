@@ -16,13 +16,15 @@ horarios_blueprint = Blueprint('horarios_blueprint', __name__)
 @horarios_blueprint.route('/horario', methods=['PUT'])
 @cross_origin()
 def create_horario():
-    content = model.create_horario(request.json['hora_inicio'], request.json['hora_fin'], request.json['dia'])    
+    content = model.create_horario(request.json['hora_inicio'], request.json['hora_fin'], 
+                                request.json['dia'])    
     return jsonify(content)
 
 @horarios_blueprint.route('/horario', methods=['PATCH'])
 @cross_origin()
 def update_horario():
-    content = model.update_horario(request.json['codigo'], request.json['hora_inicio'], request.json['hora_fin'], request.json['dia'])    
+    content = model.update_horario(request.json['codigo'], request.json['hora_inicio'], request.json['hora_fin'], 
+                                request.json['dia'])    
     return jsonify(content)
 
 @horarios_blueprint.route('/horario', methods=['DELETE'])
@@ -33,9 +35,9 @@ def delete_horario():
 @horarios_blueprint.route('/horario', methods=['POST'])
 @cross_origin()
 def get_horario():
-    return jsonify(model.get_horario(request.json['codigo']))
+    return json.dumps(model.get_horario(request.json['codigo']), default=str)
 
 @horarios_blueprint.route('/horarios', methods=['POST'])
 @cross_origin()
 def get_horarios():
-    return jsonify(model.get_horarios())
+    return json.dumps(model.get_horarios(), default=str)

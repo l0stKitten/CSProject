@@ -3,7 +3,7 @@ from psycopg2 import pool
 
 import configparser
 config = configparser.ConfigParser()
-config.read("D:/postgres_config.ini")
+config.read("C:/users/USUARIO/Documents/postgres_config.ini")
 
 dbconfig = {
     "host":config.get('postgresql', 'host'),

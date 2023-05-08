@@ -27,23 +27,24 @@ class HorarioModel:
 
     def create_horario(self, hora_inicio, hora_fin, dia):    
         data = {
-            'hora_inicio': hora_inicio,
+            'hora_inicio' : hora_inicio,
             'hora_fin': hora_fin,
             'dia': dia
         }  
-        query = """insert into horarios (pabelhora_iniciolon, hora_fin, dia) 
-            values ( %(hora_inicio)s, %(hora_fin)s, %(dia)s)"""    
+        query = """insert into horarios (hora_inicio, hora_fin, dia) 
+            values (%(hora_inicio)s, %(hora_fin)s, %(dia)s)"""    
         cursor = self.post_pool.execute(query, data, commit=True)   
         return data
 
     def update_horario(self, codigo, hora_inicio, hora_fin, dia):    
         data = {
             'codigo' : codigo,
-            'hora_inicio': hora_inicio,
+            'hora_inicio' : hora_inicio,
             'hora_fin': hora_fin,
             'dia': dia
         }  
-        query = """update horarios set hora_inicio = %(hora_inicio)s, hora_fin = %(hora_fin)s, dia = %(dia)s where codigo = %(codigo)s"""    
+        query = """update horarios set hora_inicio = %(hora_inicio)s, hora_fin = %(hora_fin)s,
+                    dia = %(dia)s where codigo = %(codigo)s"""    
         cursor = self.post_pool.execute(query, data, commit=True)   
 
         result = {'result':1} 
@@ -56,3 +57,8 @@ class HorarioModel:
 
         result = {'result': 1}
         return result 
+
+"""if __name__ == "__main__":    
+    pm = AsignaturaModel()     
+    print(pm.create_asignatura('Construccion de Software', '5', 'Ingenieria de Software')) """
+

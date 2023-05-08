@@ -116,3 +116,10 @@ ALTER TABLE "cursos" ADD FOREIGN KEY ("profesor") REFERENCES "profesores" ("dni"
 ALTER TABLE "cursos" ADD FOREIGN KEY ("horario") REFERENCES "horarios" ("codigo");
 
 ALTER TABLE "asistencias" ADD FOREIGN KEY ("matricula") REFERENCES "matriculas" ("codigo");
+
+-- Agregar esto para añadir los campos faltantes a la tabla de personas
+ALTER TABLE "personas" ADD COLUMN "path" VARCHAR;
+ALTER TABLE "personas" ADD COLUMN "vector" VARCHAR;
+
+--Default now para la fecha de asistencia
+--Default 0 para la cantidad de participaciones

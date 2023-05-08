@@ -25,7 +25,7 @@ class CursoModel:
             content = {}
         return data
 
-    def create_curso(self, codigo, asignatura, profesor, horario):  
+    def create_curso(self, asignatura, profesor, horario):  
         data = {
             'asignatura': asignatura,
             'profesor': profesor,

@@ -6,7 +6,10 @@ class MatriculaModel:
 
     def get_matricula(self, matricula_codigo):    
         params = {'codigo' : matricula_codigo}      
-        rv = self.post_pool.execute("SELECT m.codigo, m.alumno, CONCAT(m.nombres, ' ', m.apellido_paterno, ' ', apellido_materno) as fullname, c.asignatura, a.nombre as asig_nombre, m.estado from matriculas m inner join personas p on m.alumno = p.dni inner join curso c on c.codigo = m.curso inner join asignaturas a on a.codigo = c.asignatura where codigo=%(codigo)s", params)                
+        rv = self.post_pool.execute("""SELECT m.codigo, m.alumno, CONCAT(p.nombres, ' ', p.apellido_paterno, ' ', p.apellido_materno) as fullname, c.asignatura, a.nombre as asig_nombre, m.estado from matriculas m 
+                                        inner join personas p on m.alumno = p.dni 
+                                        inner join cursos c on c.codigo = m.curso inner 
+                                        join asignaturas a on a.codigo = c.asignatura where codigo=%(codigo)s""", params)                
         data = []
         content = {}
         for result in rv:
@@ -16,7 +19,10 @@ class MatriculaModel:
         return data
 
     def get_matriculas(self):  
-        rv = self.post_pool.execute("SELECT m.codigo, m.alumno, CONCAT(m.nombres, ' ', m.apellido_paterno, ' ', apellido_materno) as fullname, c.asignatura, a.nombre as asig_nombre, m.estado from matriculas m inner join personas p on m.alumno = p.dni inner join curso c on c.codigo = m.curso inner join asignaturas a on a.codigo = c.asignatura")  
+        rv = self.post_pool.execute("""SELECT m.codigo, m.alumno, CONCAT(p.nombres, ' ', p.apellido_paterno, ' ', p.apellido_materno) as fullname, c.asignatura, a.nombre as asig_nombre, m.estado from matriculas m 
+                                        inner join personas p on m.alumno = p.dni 
+                                        inner join cursos c on c.codigo = m.curso inner 
+                                        join asignaturas a on a.codigo = c.asignatura""")
         data = []
         content = {}
         for result in rv:
