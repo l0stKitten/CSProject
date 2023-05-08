@@ -22,18 +22,18 @@ def create_participacion():
 @participaciones_blueprint.route('/participacion', methods=['PATCH'])
 @cross_origin()
 def update_participacion():
-    content = model.update_participacion(request.json['codigo'], request.json['asistencia'], request.json['cantidad'])    
+    content = model.update_participacion(request.json['asistencia'], request.json['cantidad'])    
     return jsonify(content)
 
 @participaciones_blueprint.route('/participacion', methods=['DELETE'])
 @cross_origin()
 def delete_participacion():
-    return jsonify(model.delete_participacion(request.json['codigo']))
+    return jsonify(model.delete_participacion(request.json['asistencia']))
 
 @participaciones_blueprint.route('/participacion', methods=['POST'])
 @cross_origin()
 def get_participacion():
-    return jsonify(model.get_participacion(request.json['codigo']))
+    return jsonify(model.get_participacion(request.json['asistencia']))
 
 @participaciones_blueprint.route('/participaciones', methods=['POST'])
 @cross_origin()

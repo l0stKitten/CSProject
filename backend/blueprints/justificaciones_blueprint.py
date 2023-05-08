@@ -16,13 +16,13 @@ justificaciones_blueprint = Blueprint('justificaciones_blueprint', __name__)
 @justificaciones_blueprint.route('/justificacion', methods=['PUT'])
 @cross_origin()
 def create_justificacion():
-    content = model.create_justificacion(request.json['asistencia'], request.json['titulo'], request.json['descripcion'], request.json['archivo'])    
+    content = model.create_justificacion(request.json['asistencia'], request.json['titulo'], request.json['descripcion'])    
     return jsonify(content)
 
 @justificaciones_blueprint.route('/justificacion', methods=['PATCH'])
 @cross_origin()
 def update_justificacion():
-    content = model.update_justificacion(request.json['codigo'], request.json['asistencia'], request.json['titulo'], request.json['descripcion'], request.json['archivo'])    
+    content = model.update_justificacion(request.json['codigo'], request.json['asistencia'], request.json['titulo'], request.json['descripcion'])    
     return jsonify(content)
 
 @justificaciones_blueprint.route('/justificacion', methods=['DELETE'])

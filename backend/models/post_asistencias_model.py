@@ -11,11 +11,11 @@ class AsistenciaModel:
         params = {'codigo' : codigo_asistencia}      
         rv = self.post_pool.execute("""SELECT a.codigo, a.estado, a.fecha_asistencia, CONCAT(p.nombres, ' ', p.apellido_paterno, ' ', p.apellido_materno) as full_name, a3.nombre from asistencias a 
                                         inner join  matriculas m on a.matricula = m.codigo
-                                        inner join alumno a2 on a2.dni = m.alumno
+                                        inner join alumnos a2 on a2.dni = m.alumno
                                         inner join personas p on p.dni = a2.dni
                                         inner join cursos c on c.codigo = m.curso
                                         inner join asignaturas a3 on a3.codigo = c.asignatura
-                                        where j.codigo=%(codigo)s""", params)                
+                                        where a.codigo=%(codigo)s""", params)                
         data = []
         content = {}
         for result in rv:
@@ -76,7 +76,7 @@ class AsistenciaModel:
         cursor = self.post_pool.execute(query, data, commit=True)  
         return data
 
-    def update_asistencia(self, codigo_asistencia, asistencia, titulo, descripcion, archivo):    
+    def update_asistencia(self, codigo_asistencia, estado, fecha_asistencia, matricula):    
         data = {
             'codigo' : codigo_asistencia,
             'estado' : estado,
