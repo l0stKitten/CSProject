@@ -13,8 +13,7 @@ class PersonaModel:
         content = {}
         for result in rv:
             content = {'dni': result[0], 'nombres': result[1], 'apellido_paterno': result[2], 'apellido_materno': result[3], 
-                         'fecha_nacimiento': result[4],  'correo_institucional': result[5],  'password': result[6],  
-                         'path': result[7],  'vector': result[8]}
+                         'fecha_nacimiento': result[4],  'correo_institucional': result[5],  'password': result[6]}
             data.append(content)
             content = {}
         return data
@@ -25,8 +24,7 @@ class PersonaModel:
         content = {}
         for result in rv:
             content = {'dni': result[0], 'nombres': result[1], 'apellido_paterno': result[2], 'apellido_materno': result[3], 
-                         'fecha_nacimiento': result[4],  'correo_institucional': result[5],  'password': result[6],  
-                         'path': result[7],  'vector': result[8]}
+                         'fecha_nacimiento': result[4],  'correo_institucional': result[5],  'password': result[6]}
             data.append(content)
             content = {}
         return data
@@ -54,7 +52,12 @@ class PersonaModel:
  
         return data
 
-    def update_persona(self, dni, nombres, apellido_paterno, apellido_materno, fecha_nacimiento, correo_institucional, password):    
+    def update_persona(self, dni, nombres, apellido_paterno, apellido_materno, fecha_nacimiento, correo_institucional, password, path):    
+        endpoint_url = "http://127.0.0.1:81/openfaceAPI"
+        f = {"file": open("{}".format(path), "rb")}
+        vec = requests.post(endpoint_url, files=f) 
+        res = vec.json()
+        
         data = {
             'dni' : dni,
             'nombres' : nombres,
@@ -62,11 +65,13 @@ class PersonaModel:
             'apellido_materno': apellido_materno,
             'fecha_nacimiento': fecha_nacimiento,
             'correo_institucional': correo_institucional,
-            'password': password
+            'password': password,
+            'path': path,
+            'vector': res["result"]
         }  
         query = """update personas set nombres = %(nombres)s, apellido_paterno = %(apellido_paterno)s,
                     apellido_materno = %(apellido_materno)s, fecha_nacimiento = %(fecha_nacimiento)s,
-                    correo_institucional = %(correo_institucional)s, password = %(password)s where dni = %(dni)s"""    
+                    correo_institucional = %(correo_institucional)s, password = %(password)s, path = %(path)s, vector = %(vector)s where dni = %(dni)s"""    
         cursor = self.post_pool.execute(query, data, commit=True)   
 
         result = {'result':1} 

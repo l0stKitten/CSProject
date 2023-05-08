@@ -26,7 +26,7 @@ def create_persona():
 def update_persona():
     content = model.update_persona(request.json['dni'], request.json['nombres'], request.json['apellido_paterno'], 
                                 request.json['apellido_materno'], request.json['fecha_nacimiento'], request.json['correo_institucional'],
-                                request.json['password'])    
+                                request.json['password'], request.json['path'])    
     return jsonify(content)
 
 @personas_blueprint.route('/persona', methods=['DELETE'])
