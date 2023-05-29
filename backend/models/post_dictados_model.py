@@ -6,7 +6,7 @@ class DictadoModel:
 
     def get_dictado(self, dictado_codigo):    
         params = {'codigo' : dictado_codigo}      
-        rv = self.post_pool.execute("select d.codigo, c.codigo as curso, s.codigo as salon, d.tema from dictados d inner join cursos c ON d.curso = c.codigo inner join salones s ON d.salon = s.codigo; where codigo=%(codigo)s", params)                
+        rv = self.post_pool.execute("select d.codigo, c.codigo as curso, s.codigo as salon, d.tema from dictados d inner join cursos c ON d.curso = c.codigo inner join salones s ON d.salon = s.codigo where d.codigo=%(codigo)s", params)                
         data = []
         content = {}
         for result in rv:
@@ -16,7 +16,7 @@ class DictadoModel:
         return data
 
     def get_dictados(self):  
-        rv = self.post_pool.execute("select d.codigo, c.codigo as curso, s.codigo as salon, d.tema from dictados d inner join cursos c ON d.curso = c.codigo inner join salones s ON d.salon = s.codigo;")  
+        rv = self.post_pool.execute("select d.codigo, c.codigo as curso, s.codigo as salon, d.tema from dictados d inner join cursos c ON d.curso = c.codigo inner join salones s ON d.salon = s.codigo")  
         data = []
         content = {}
         for result in rv:
@@ -25,14 +25,14 @@ class DictadoModel:
             content = {}
         return data
 
-    def create_dictado(self, codigo, curso, salon, tema):  
+    def create_dictado(self, curso, salon, tema):  
         data = {
             'curso': curso,
             'salon': salon,
             'tema': tema
         }  
-        query = """insert into dictados (dictado, salon, tema) 
-            values ( %(dictado)s, %(salon)s, %(tema)s)"""    
+        query = """insert into dictados (curso, salon, tema) 
+            values ( %(curso)s, %(salon)s, %(tema)s)"""    
         cursor = self.post_pool.execute(query, data, commit=True)   
         return data
 

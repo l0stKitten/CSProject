@@ -3,7 +3,7 @@ from psycopg2 import pool
 
 import configparser
 config = configparser.ConfigParser()
-config.read("C:/users/USUARIO/Documents/postgres_config.ini")
+config.read("C:/users/ASUS/Documents/postgres_config.ini")
 
 dbconfig = {
     "host":config.get('postgresql', 'host'),
@@ -20,7 +20,7 @@ class PostgreSQLPool(object):
     """
 
     def __init__(self):             
-        self.pool = self.create_pool(min_con=1, max_con=10)
+        self.pool = self.create_pool(min_con=1, max_con=60)
 
     def create_pool(self, min_con, max_con):
         """

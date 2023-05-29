@@ -13,7 +13,7 @@ class PersonaModel:
         content = {}
         for result in rv:
             content = {'dni': result[0], 'nombres': result[1], 'apellido_paterno': result[2], 'apellido_materno': result[3], 
-                         'fecha_nacimiento': result[4],  'correo_institucional': result[5],  'password': result[6]}
+                         'fecha_nacimiento': result[4],  'correo_institucional': result[5],  'password': result[6],  'path': result[7],  'vector': result[8]}
             data.append(content)
             content = {}
         return data
@@ -28,28 +28,60 @@ class PersonaModel:
             data.append(content)
             content = {}
         return data
-
-    def create_persona(self, dni, nombres, apellido_paterno, apellido_materno, fecha_nacimiento, correo_institucional, password, path): 
-        endpoint_url = "http://127.0.0.1:81/openfaceAPI"
-        f = {"file": open("{}".format(path), "rb")}
-        vec = requests.post(endpoint_url, files=f) 
-        res = vec.json()
-        data = {
-            'dni' : dni,
-            'nombres' : nombres,
-            'apellido_paterno': apellido_paterno,
-            'apellido_materno': apellido_materno,
-            'fecha_nacimiento': fecha_nacimiento,
-            'correo_institucional': correo_institucional,
-            'password': password,
-            'path': path,
-            'vector': res["result"]
-            
-        }  
-        query = """insert into personas (dni, nombres, apellido_paterno, apellido_materno, fecha_nacimiento, correo_institucional, password, path, vector) 
+    
+    def crear_p(self, dni, nombres, apellido_paterno, apellido_materno, fecha_nacimiento, correo_institucional, password, path):
+        if path is not None:
+            endpoint_url = "http://127.0.0.1:81/openfaceAPI"
+            f = {"file": open("{}".format(path), "rb")}
+            vec = requests.post(endpoint_url, files=f) 
+            res = vec.json()
+            data = {
+                'dni' : dni,
+                'nombres' : nombres,
+                'apellido_paterno': apellido_paterno,
+                'apellido_materno': apellido_materno,
+                'fecha_nacimiento': fecha_nacimiento,
+                'correo_institucional': correo_institucional,
+                'password': password,
+                'path': path,
+                'vector': res["result"]
+                
+            }
+            query = """insert into personas (dni, nombres, apellido_paterno, apellido_materno, fecha_nacimiento, correo_institucional, password, path, vector) 
             values (%(dni)s, %(nombres)s, %(apellido_paterno)s, %(apellido_materno)s, %(fecha_nacimiento)s, %(correo_institucional)s, %(password)s, %(path)s, %(vector)s)""" 
-        cursor = self.post_pool.execute(query, data, commit=True)   
+            cursor = self.post_pool.execute(query, data, commit=True)   
+        else:
+            data = {
+                'dni' : dni,
+                'nombres' : nombres,
+                'apellido_paterno': apellido_paterno,
+                'apellido_materno': apellido_materno,
+                'fecha_nacimiento': fecha_nacimiento,
+                'correo_institucional': correo_institucional,
+                'password': password
+                
+            }
+            query = """insert into personas (dni, nombres, apellido_paterno, apellido_materno, fecha_nacimiento, correo_institucional, password) 
+                values (%(dni)s, %(nombres)s, %(apellido_paterno)s, %(apellido_materno)s, %(fecha_nacimiento)s, %(correo_institucional)s, %(password)s)""" 
+            cursor = self.post_pool.execute(query, data, commit=True)   
  
+        return data
+    
+    def create_persona(self, dni, nombres, apellido_paterno, apellido_materno, fecha_nacimiento, correo_institucional, password, path, tipo): 
+        data = self.crear_p(dni, nombres, apellido_paterno, apellido_materno, fecha_nacimiento, correo_institucional, password, path)
+
+        if tipo == "al":
+            endpoint_url = "http://127.0.0.1:5000/alumno"
+            r = requests.put(endpoint_url, json={"dni": dni})
+            print(r)
+        elif tipo == "ad":
+            endpoint_url = "http://127.0.0.1:5000/administrador"
+            r = requests.put(endpoint_url, json={"dni": dni, "cargo": ""})
+            print(r)
+        elif tipo == "p":
+            endpoint_url = "http://127.0.0.1:5000/profesor"
+            r = requests.put(endpoint_url, json={"dni": dni, "especialidad": ""})
+            print(r)
         return data
 
     def update_persona(self, dni, nombres, apellido_paterno, apellido_materno, fecha_nacimiento, correo_institucional, password, path):    

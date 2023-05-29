@@ -122,4 +122,7 @@ ALTER TABLE "personas" ADD COLUMN "path" VARCHAR;
 ALTER TABLE "personas" ADD COLUMN "vector" VARCHAR;
 
 --Default now para la fecha de asistencia
+ALTER TABLE "asistencias" ALTER COLUMN "fecha_asistencia" SET DEFAULT now();
+
 --Default 0 para la cantidad de participaciones
+ALTER TABLE "participaciones" ALTER COLUMN "cantidad" SET DEFAULT 0;

@@ -6,7 +6,12 @@ class CursoModel:
 
     def get_curso(self, curso_codigo):    
         params = {'codigo' : curso_codigo}      
-        rv = self.post_pool.execute("SELECT c.codigo, c.asignatura, a.nombre as asig_nombre, c.profesor, CONCAT(p.nombres, ' ', p.apellido_paterno, ' ', p.apellido_materno) as fullname,  c.horario from cursos c inner join profesores pr ON c.profesor = pr.dni inner join personas p on pr.dni = p.dni inner join asignaturas a on a.codigo = c.asignatura inner join horarios h on h.codigo = c.horario where codigo=%(codigo)s", params)                
+        rv = self.post_pool.execute("""SELECT c.codigo, c.asignatura, a.nombre as asig_nombre, c.profesor, CONCAT(p.nombres, ' ', p.apellido_paterno, ' ', p.apellido_materno) as fullname,  c.horario from cursos c 
+                                            inner join profesores pr ON c.profesor = pr.dni 
+                                            inner join personas p on pr.dni = p.dni 
+                                            inner join asignaturas a on a.codigo = c.asignatura 
+                                            inner join horarios h on h.codigo = c.horario 
+                                            where c.codigo=%(codigo)s""", params)                
         data = []
         content = {}
         for result in rv:
