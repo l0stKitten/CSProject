@@ -19,12 +19,25 @@
 
 <script setup>
     import { ref } from "vue";
+    import { useRouter } from "vue-router";
+
+    const router = useRouter();
 
     const items = ref([
         { 
             label: 'Perfil', 
             icon: 'pi pi-fw pi-user',
-            items: [{ label: 'Configuración', icon: 'pi pi-fw pi-cog' }]
+            items: [{ 
+                label: 'Configuración',
+                icon: 'pi pi-fw pi-cog',
+                command: () => router.push('/alum/config')
+            },
+            { 
+                label: 'Cambiar Contraseña',
+                icon: 'pi pi-fw pi-cog',
+                command: () => router.push('/alum/config/password')
+            }
+            ]
         },
         {
             label: 'Cursos',
@@ -38,15 +51,22 @@
         },
         {
             label: 'Participaciones',
-            icon: 'pi pi-fw pi-file'
+            icon: 'pi pi-fw pi-file',
+            command: () => router.push('/alum/part')
         },
         {
             label: 'Asistencia',
             icon: 'pi pi-fw pi-file',
             items: [
                 {
+                    label: 'Asistencias',
+                    icon: 'pi pi-fw pi-file',
+                    command: () => router.push('/alum/asis')
+                },
+                {
                     label: 'Justificaciones',
-                    icon: 'pi pi-fw pi-file'
+                    icon: 'pi pi-fw pi-file',
+                    command: () => router.push('/alum/just')
                 }
             ]
         }

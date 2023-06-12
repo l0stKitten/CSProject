@@ -19,12 +19,25 @@
 
 <script setup>
     import { ref } from "vue";
+    import { useRouter } from "vue-router";
+
+    const router = useRouter();
 
     const items = ref([
         { 
             label: 'Perfil', 
             icon: 'pi pi-fw pi-user',
-            items: [{ label: 'Configuración', icon: 'pi pi-fw pi-cog' }]
+            items: [{ 
+                label: 'Configuración',
+                icon: 'pi pi-fw pi-cog',
+                command: () => router.push('/prof/config')
+            },
+            { 
+                label: 'Cambiar Contraseña',
+                icon: 'pi pi-fw pi-cog',
+                command: () => router.push('/prof/config/password')
+            }
+            ]
         },
         {
             label: 'Asistencia',

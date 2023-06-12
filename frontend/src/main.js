@@ -76,6 +76,16 @@ import AdminCompMat from './components/AdminCompMat'
 import AdminCompAsis from './components/AdminCompAsis'
 import AdminCompJus from './components/AdminComJus'
 
+import ProfesorCom from './components/ProfesorCom'
+import ProfComConf from './components/ProfComConf'
+import ProfComCofPass from './components/ProfComCofPass'
+import AlumnoCom from './components/AlumnoCom'
+import AlumComConf from './components/AlumComConf'
+import AlumComCofPass from './components/AlumComCofPass'
+import AlumComUAT from './components/AlumComUAT'
+import AlumComUJT from './components/AlumComUJT'
+import AlumComPart from './components/AlumComPart'
+
 const routes = [
     { path: '/', component: Login },
     { path: '/admin', component: AdminiCom },
@@ -91,6 +101,16 @@ const routes = [
     { path: '/admin/matricula', component: AdminCompMat },
     { path: '/admin/asistencia', component: AdminCompAsis },
     { path: '/admin/justificaciones', component: AdminCompJus },
+
+    { path: '/prof', component: ProfesorCom },
+    { path: '/prof/config', component: ProfComConf },
+    { path: '/prof/config/password', component: ProfComCofPass },
+    { path: '/alum', component: AlumnoCom },
+    { path: '/alum/config', component: AlumComConf },
+    { path: '/alum/config/password', component: AlumComCofPass },
+    { path: '/alum/asis', component: AlumComUAT },
+    { path: '/alum/just', component: AlumComUJT },
+    { path: '/alum/part', component: AlumComPart },
   ]
 
 const router = createRouter({
