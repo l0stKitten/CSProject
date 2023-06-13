@@ -1,51 +1,72 @@
 <template>
-    <div class="card flex justify-content-center">
-      <Button label="Agregar Justificación" icon="pi pi-plus" severity="success" @click="visible = true" />
-      <Dialog v-model:visible="visible" modal header="Agregar Justificación" :style="{ width: '50vw' }">
-        <form @submit.prevent="submitForm" class="form-container">
-          <div class="form-row">
-            <label for="asistencia">Asistencia</label>
-            <InputText id="asistencia" v-model="formData.asistencia" required requiredMessage="Ingrese el código de asistencia"/>
-          </div>
-  
-          <div class="form-row">
-            <label for="titulo">Titulo</label>
-            <InputText id="titulo" v-model="formData.titulo" required requiredMessage="Ingrese un titulo" />
-          </div>
-  
-          <div class="form-row">
-            <label for="descripcion">Descripción</label>
-            <InputText id="descripcion" v-model="formData.descripcion" required requiredMessage="Ingrese una descripción"/>
-          </div>
-  
-          <div class="form-row">
-            <label for="archivo">Archivo</label>
-            <FileUpload id="archivo" mode="basic" name="demo[]" url="/api/upload" accept="image/*" customUpload @uploader="customBase64Uploader" />
-          </div> 
+  <div class="card flex justify-content-center">
+    <Button label="Agregar Justificación" icon="pi pi-plus" severity="success" @click="visible = true" />
+    <Dialog v-model:visible="visible" modal header="Agregar Justificación" :style="{ width: '50vw' }">
+      <form @submit.prevent="createJustificacion" class="form-container">
+        <div class="form-row">
+          <label for="asistencia">Asistencia</label>
+          <InputText id="asistencia" v-model="formData.asistencia" required requiredMessage="Ingrese el código de asistencia" />
+        </div>
 
-          <div class="container">
-            <Button label="Agregar" icon="pi pi-plus" type="submit" />
-            <Button label="Cancelar" icon="pi pi-times" @click="visible = false" text />
-          </div>
-          
-        </form>
-      </Dialog>
-    </div>
+        <div class="form-row">
+          <label for="titulo">Titulo</label>
+          <InputText id="titulo" v-model="formData.titulo" required requiredMessage="Ingrese un titulo" />
+        </div>
+
+        <div class="form-row">
+          <label for="descripcion">Descripción</label>
+          <InputText id="descripcion" v-model="formData.descripcion" required requiredMessage="Ingrese una descripción" />
+        </div>
+
+        <div class="form-row">
+          <label for="archivo">Archivo</label>
+          <FileUpload
+            id="archivo"
+            mode="basic"
+            name="demo[]"
+            url="/api/upload"
+            accept="image/*"
+            customUpload
+            @uploader="customBase64Uploader"
+          />
+        </div>
+
+        <div class="container">
+          <Button label="Agregar" icon="pi pi-plus" type="submit" />
+          <Button label="Cancelar" icon="pi pi-times" @click="visible = false" text />
+        </div>
+      </form>
+    </Dialog>
+  </div>
 </template>
   
-<script setup>
-  import { ref } from "vue";
-  
-  const visible = ref(false);
-  const selectedType = ref('');
-  const selectedTypeValid = ref(true);
-  let selected = '';
-  const formData = ref({
-    asistencia: '',
-    titulo: '',
-    descripcion: '',
-    archivo: ''
-  });
+<script>
+  import axios from 'axios';
+  import { ref } from 'vue';
+
+  export default {
+    data() {
+        return {
+          justificaciones: [],
+          newJustificacion: {},
+          postURL: 'http://127.0.0.1:5000',
+          config_request: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+          },
+        };
+      },
+    setup() {
+      const visible = ref(false);
+      const selectedType = ref('');
+      const selectedTypeValid = ref(true);
+      let selected = '';
+      const formData = ref({
+        asistencia: '',
+        titulo: '',
+        descripcion: '',
+        archivo: '',
+      });
 
   const customBase64Uploader = async (event) => {
         const file = event.files[0];
@@ -60,7 +81,7 @@
         };
     };
   
-  function submitForm() {
+    function submitForm() {
     if (!selectedType.value) {
         selectedTypeValid.value = false; // Set validation state to false if no value is selected
     } else {
@@ -71,25 +92,44 @@
         resetForm();
     }
   }
-
-  const handleDropdownChange = () =>  {
-      selected = selectedType.value.name
-      selectedTypeValid.value = true;
-    }
+  const handleDropdownChange = () => {
+          selected = selectedType.value.name
+          selectedTypeValid.value = true;
+        }
   
-  function resetForm() {
-    formData.value.dni = '';
-    formData.value.nombres = '';
-    formData.value.apellido_paterno = '';
-    formData.value.apellido_materno = '';
-    formData.value.fecha_nacimiento = '';
-    formData.value.email = '';
-    formData.value.password = '';
-    formData.value.path = '';
-    formData.value.cargo = '';
-    formData.value.especialidad = '';
-    selectedType.value = '';
-    }
+        function resetForm() {
+          formData.value.numero = '';
+          formData.value.pabellon = '';
+        }
+  
+        return { visible, selectedType, selectedTypeValid, formData, submitForm, handleDropdownChange, resetForm };
+      },
+      methods: {
+        createJustificacion() {
+          var config_request = {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+          };
+          axios
+            .put(this.postURL + "/justificación", this.formData, { headers: config_request })
+            .then(res => {
+              this.justificaciones.push(res.data);
+              console.log(res.data);
+            })
+            .catch(error => {
+              console.log(error);
+            });
+
+          this.visible = false;
+          this.resetForm();
+        },
+      },
+      created() {
+        axios.post(this.postURL + '/justificaciones')
+          .then((res) => { this.justificaciones = res.data; })
+          .catch((error) => { console.log(error) })
+      },
+    };
 </script>
 
 <style scoped>

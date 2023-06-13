@@ -17,12 +17,12 @@
             </Column>
             <Column header="Editar">
                 <template #body>
-                    <Button label="Editar" severity="warning"></Button>
+                    <Button icon="pi pi-fw pi-pencil" label="" severity="warning"></Button>
                 </template>
             </Column>
             <Column header="Eliminar"> ¿
-                <template #body>
-                    <Button label="Eliminar" severity="danger"></Button>
+                <template #body="rowData">
+                    <Button icon="pi pi-fw pi-trash" label="" severity="danger" @click="deleteCurso(rowData)"></Button>
                 </template>
             </Column>
         </DataTable>
@@ -46,6 +46,23 @@
             },
         };
     },
+    methods:{
+            
+        deleteCurso(curso){  
+                    var config_request={
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': '*'
+                    }
+                    axios.delete(this.postURL + '/curso', {data: {codigo: curso.data.codigo},  config_request })
+                        .then(res => {                      
+                            this.cursos.splice(this.cursos.indexOf(curso), 1);
+                            console.log(res.data);
+                        })
+                        .catch((error) => {
+                            console.log(error)
+                        }); 
+                }
+        },
     created() {
         axios.post(this.postURL + '/cursos')
             .then((res) => { this.cursos = res.data; })

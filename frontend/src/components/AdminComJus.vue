@@ -8,8 +8,8 @@
           <p>{{ just.descripcion }}</p>
         </template>
         <template #footer>
-            <p>{{ just.fecha_asistencia }}</p>
-          <Button icon="pi pi-pencil" severity="warning" label="Editar" />
+            <p>{{ formatDate(just.fecha_asistencia) }}</p>
+          <Button icon="pi pi-pencil" severity="warning" label="" />
         </template>
       </Card>
     </div>
@@ -33,6 +33,16 @@
         axios.post(this.postURL + '/justificaciones')
             .then((res) => { this.justificaciones = res.data; })
             .catch((error) => { console.log(error) })
+    }, computed: {
+        formatDate() {
+        return (dateString) => {
+            const date = new Date(dateString);
+            const day = date.getDate().toString().padStart(2, "0");
+            const month = (date.getMonth() + 1).toString().padStart(2, "0");
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        };
+        },
     },
     components: { MenuCompAd }
     };

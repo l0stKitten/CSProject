@@ -10,16 +10,20 @@
             <Column field="nombres" sortable header="Nombres"></Column>
             <Column field="apellido_paterno" sortable header="Apellido Paterno"></Column>
             <Column field="apellido_materno" sortable header="Apellido Materno"></Column>
-            <Column field="fecha_nacimiento" sortable header="Fecha Nacimiento"></Column>
+            <Column field="fecha_nacimiento" sortable header="Fecha Nacimiento">
+                <template #body="rowData">
+                    {{ formatDate(rowData.data.fecha_nacimiento) }}
+                </template>
+            </Column>
             <Column field="correo_institucional" sortable header="Email"></Column>
             <Column header="Editar">
                 <template #body>
-                    <Button label="Editar" severity="warning"></Button>
+                    <Button icon="pi pi-fw pi-pencil" label="" severity="warning"></Button>
                 </template>
             </Column>
             <Column header="Eliminar"> ¿
-                <template #body>
-                    <Button label="Eliminar" severity="danger"></Button>
+                <template #body="rowData">
+                    <Button icon="pi pi-fw pi-trash" label="" severity="danger" @click="deleteProfesor(rowData)"></Button>
                 </template>
             </Column>
         </DataTable>
@@ -44,11 +48,38 @@
             },
         };
     },
+    methods:{
+            
+        deleteProfesor(profesor){  
+                        var config_request={
+                            'Content-Type': 'application/json',
+                            'Access-Control-Allow-Origin': '*'
+                        }
+                        axios.delete(this.postURL + '/profesor', {data: {dni: profesor.data.dni},  config_request })
+                            .then(res => {                      
+                                this.profesores.splice(this.profesores.indexOf(profesor), 1);
+                                console.log(res.data);
+                            })
+                            .catch((error) => {
+                                console.log(error)
+                            }); 
+                    }
+            },
     created() {
         axios.post(this.postURL + '/profesores')
             .then((res) => { this.profesores = res.data; })
             .catch((error) => { console.log(error) })
-    }
+    }, computed: {
+        formatDate() {
+        return (dateString) => {
+            const date = new Date(dateString);
+            const day = date.getDate().toString().padStart(2, "0");
+            const month = (date.getMonth() + 1).toString().padStart(2, "0");
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        };
+        },
+    },
 };
 </script>
 

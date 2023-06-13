@@ -30,9 +30,11 @@ class PersonaModel:
         return data
     
     def crear_p(self, dni, nombres, apellido_paterno, apellido_materno, fecha_nacimiento, correo_institucional, password, path):
-        if path is not None:
+        if path is not '':
+            dir = "C:/Users/ASUS/Pictures/Personas/{}".format(path)
+            print(dir)
             endpoint_url = "http://127.0.0.1:81/openfaceAPI"
-            f = {"file": open("{}".format(path), "rb")}
+            f = {"file": open(r"{}".format(dir), "rb")}
             vec = requests.post(endpoint_url, files=f) 
             res = vec.json()
             data = {
@@ -67,20 +69,20 @@ class PersonaModel:
  
         return data
     
-    def create_persona(self, dni, nombres, apellido_paterno, apellido_materno, fecha_nacimiento, correo_institucional, password, path, tipo): 
+    def create_persona(self, dni, nombres, apellido_paterno, apellido_materno, fecha_nacimiento, correo_institucional, password, path, tipo, cargo, especialidad): 
         data = self.crear_p(dni, nombres, apellido_paterno, apellido_materno, fecha_nacimiento, correo_institucional, password, path)
 
-        if tipo == "al":
+        if tipo == "Alumno":
             endpoint_url = "http://127.0.0.1:5000/alumno"
             r = requests.put(endpoint_url, json={"dni": dni})
             print(r)
-        elif tipo == "ad":
+        elif tipo == "Administrador":
             endpoint_url = "http://127.0.0.1:5000/administrador"
-            r = requests.put(endpoint_url, json={"dni": dni, "cargo": ""})
+            r = requests.put(endpoint_url, json={"dni": dni, "cargo": cargo})
             print(r)
-        elif tipo == "p":
+        elif tipo == "Profesor":
             endpoint_url = "http://127.0.0.1:5000/profesor"
-            r = requests.put(endpoint_url, json={"dni": dni, "especialidad": ""})
+            r = requests.put(endpoint_url, json={"dni": dni, "especialidad": especialidad})
             print(r)
         return data
 

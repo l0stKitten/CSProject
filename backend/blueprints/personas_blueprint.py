@@ -18,7 +18,8 @@ personas_blueprint = Blueprint('personas_blueprint', __name__)
 def create_persona():
     content = model.create_persona(request.json['dni'], request.json['nombres'], request.json['apellido_paterno'], 
                                 request.json['apellido_materno'], request.json['fecha_nacimiento'], request.json['correo_institucional'],
-                                request.json['password'], request.json['path'], request.json['tipo'])    
+                                request.json['password'], request.json['path'], request.json['tipo'], request.json['cargo'], 
+                                request.json['especialidad'])    
     return jsonify(content)
 
 @personas_blueprint.route('/persona', methods=['PATCH'])

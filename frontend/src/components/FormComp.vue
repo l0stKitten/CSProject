@@ -39,40 +39,10 @@
           </div>
   
           <div class="form-row">
-            <label for="password">Contraseña</label>
-            <Password id="password" v-model="formData.password" toggleMask required />
-          </div>
-  
-          <div class="form-row">
             <label for="path">Foto</label>
             <FileUpload id="path" mode="basic" name="demo[]" url="/api/upload" accept="image/*" customUpload @uploader="customBase64Uploader" />
           </div>
           
-          <div class="form-row">
-            <label for="tipo">Tipo</label>
-            <Dropdown v-model="selectedType" :options="tipos" optionLabel="name" placeholder="Selecciona un tipo" class="w-full md:w-14rem" @change="handleDropdownChange"/>
-            <div v-if="!selectedTypeValid" class="error-message">Por favor, selecciona un tipo.</div>
-          </div>
-
-        <div v-if="selected === 'Administrador'"> 
-            <div class="form-row">
-                <label for="cargo">Cargo</label>
-                <InputText id="cargo" v-model="formData.cargo"/>
-            </div>
-        </div>
-        <div v-else-if="selected === 'Profesor'"> 
-            <div class="form-row">
-                <label for="especialidad">Especialidad</label>
-                <InputText id="especialidad" v-model="formData.especialidad" />
-            </div>
-            
-        </div>
-        <div v-else> 
-            <div class="form-row">
-                <label for="alumno"></label>
-            </div>
-            
-        </div>
 
           <div class="container">
             <Button label="Agregar" icon="pi pi-plus" type="submit" />

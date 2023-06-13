@@ -40,7 +40,8 @@
   
 <script setup>
   import { ref } from "vue";
-  
+  import axios from 'axios'
+
   const visible = ref(false);
   const selectedType = ref('');
   const selectedTypeValid = ref(true);
@@ -59,6 +60,13 @@
     especialidad: ''
 
   });
+
+  const newTask = ref({});
+  const postURL = 'http://127.0.0.1:5000';
+  const config_request = {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*'
+  };
 
   const tipos = ref([
     { name: 'Alumno', code: 'al' },
@@ -79,17 +87,17 @@
         };
     };
   
-  function submitForm() {
+  const submitForm = (event) => {
     if (!selectedType.value) {
-        selectedTypeValid.value = false; // Set validation state to false if no value is selected
+      selectedTypeValid.value = false;
     } else {
-        selectedTypeValid.value = true;
-        // Handle form submission logic here
-        console.log(formData.value);
-        visible.value = false;
-        resetForm();
+      selectedTypeValid.value = true;
+
+      console.log(formData.value);
+      visible.value = false;
+      resetForm();
     }
-  }
+  };
 
   const handleDropdownChange = () =>  {
       selected = selectedType.value.name;
@@ -124,6 +132,7 @@
     import MenuCompAd from './MenuCompAd.vue';
 
     export default {
+      
         components: {
             MenuCompAd
         }

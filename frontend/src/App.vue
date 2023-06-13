@@ -5,23 +5,9 @@
 </template>
 
 <script>
-import MenuCompAd from './components/MenuCompAd.vue';
-import TableComp from './components/TableComp.vue';
-import PopUpForm from './components/PopUpForm.vue'
-import MenuCompAl from './components/MenuCompAl.vue';
-import MenuCompPro from './components/MenuCompPro.vue';
-import LogIn from './components/LogIn.vue';
 
 export default {
   name: 'App',
-  components: {
-    TableComp,
-    MenuCompAd,
-    PopUpForm,
-    MenuCompAl,
-    MenuCompPro,
-    LogIn
-}
 }
 </script>
 

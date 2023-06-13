@@ -1,61 +1,54 @@
 <template>
-    <div class="login-container">
-      <Card title="Login" class="login-card">
-        <div class="login-header">
-          <img src="@/assets/logo.svg" height="150" alt="Logo" />
+  <div class="login-container">
+    <form class="login-form" @submit.prevent="login">
+      <div class="login-header">
+        <img src="@/assets/logo.svg" height="150" alt="Logo" />
+      </div>
+      <div class="p-fluid">
+        <div class="p-field">
+          <label for="username">Username</label>
+          <InputText id="username" v-model="username" />
         </div>
-        <div class="p-fluid">
-          <div class="p-field">
-            <label for="username">Username</label>
-            <InputText id="username" v-model="username" />
-          </div>
-          <div class="p-field">
-            <label for="password">Password</label>
-            <Password id="password" v-model="password" />
-          </div>
-          <Button label="Login" class="p-button-primary" severity="info"  @click="login" />
+        <div class="p-field">
+          <label for="password">Password</label>
+          <Password id="password" v-model="password" />
         </div>
-      </Card>
-    </div>
-  </template>
-  
+        <Button label="Login" class="p-button-primary" severity="info" type="submit" />
+      </div>
+    </form>
+  </div>
+</template>
+
 <script>
   import { ref } from "vue";
-  import { Card } from "primevue/card";
-  import { InputText } from "primevue/inputtext";
-  import { Password } from "primevue/password";
-  import { Button } from "primevue/button";
-  
+  import { InputText, Password, Button } from "primevue/inputtext";
+
   export default {
     components: {
-      Card,
       InputText,
       Password,
-      Button
+      Button,
     },
-    setup() {
-      const username = ref("");
-      const password = ref("");
-  
-      const login = () => {
-        // Perform login logic here
-        if (username.value === "admin" && password.value === "password") {
-          // Redirect to dashboard or perform other actions
-          console.log("Logged in successfully");
-        } else {
-          console.log("Invalid username or password");
-        }
-      };
-  
+    data() {
       return {
-        username,
-        password,
-        login
+        username: "",
+        password: "",
       };
-    }
+    },
+    methods: {
+      login() {
+        // Implement your login logic here
+        console.log("Username:", this.username);
+        console.log("Password:", this.password);
+
+        // Reset the form after login attempt
+        this.username = "";
+        this.password = "";
+      },
+    },
   };
 </script>
-  
+
 <style scoped>
   .login-container {
     display: flex;
@@ -63,18 +56,26 @@
     align-items: center;
     height: 100vh;
   }
-  
-  .login-card {
-    width: 300px;
+
+  .login-form {
+    width: 400px;
+    border: 1px solid #ccc;
+    padding: 2rem;
+    border-radius: 4px;
   }
+
   .login-header {
     display: flex;
     justify-content: center;
     margin-bottom: 2rem;
-}
-  
+  }
+
+  .p-fluid {
+    display: flex;
+    flex-direction: column;
+  }
+
   .p-field {
     margin-bottom: 1rem;
   }
 </style>
-  

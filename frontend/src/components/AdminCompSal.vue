@@ -12,14 +12,38 @@
             <Column field="codigo" header="Código"></Column>
             <Column field="pabellon" sortable header="Pabellón"></Column>
             <Column field="numero" sortable header="Número"></Column>
+            
             <Column header="Editar">
-                <template #body>
-                    <Button label="Editar" severity="warning"></Button>
+                <template #body="rowData">
+                    <Button icon="pi pi-fw pi-pencil" label="" severity="warning" @click="agregarInput(rowData); visible = true"></Button>
+                    <Dialog v-model:visible="visible" modal header="Editar Salon" :style="{ width: '50vw' }">
+                    <form @submit="updateSalon" class="form-container">
+                        <div class="form-row">
+                        <label for="codigo">Codigo</label>
+                        <InputText id="codigo" v-model="actualizarSalon.codigo" required requiredMessage="Ingrese un codigo"/>
+                        </div>
+        
+                        <div class="form-row">
+                        <label for="numero">Numero</label>
+                        <InputText id="numero" v-model="actualizarSalon.numero" required requiredMessage="Ingrese un número de aula" />
+                        </div>
+        
+                        <div class="form-row">
+                        <label for="pabellon">Pabellon</label>
+                        <InputText id="pabellon" v-model="actualizarSalon.pabellon" required requiredMessage="Ingrese un pabellon"/>
+                        </div>
+                        <div class="container">
+                        <Button label="Actualizar" icon="pi pi-check" type="submit" />
+                        <Button label="Cancelar" icon="pi pi-times" @click="visible = false" text />
+                        </div>
+                    </form>
+                    </Dialog>
                 </template>
             </Column>
+                
             <Column header="Eliminar"> ¿
-                <template #body>
-                    <Button label="Eliminar" severity="danger"></Button>
+                <template #body="rowData">
+                    <Button icon="pi pi-fw pi-trash" label="" severity="danger" @click="deleteSalon(rowData)"></Button>
                 </template>
             </Column>
         </DataTable>
@@ -41,6 +65,88 @@
                 'Access-Control-Allow-Origin': '*'
             },
         };
+    },
+    setup() {
+        const visible = ref(false);
+        const selectedType = ref('');
+        const selectedTypeValid = ref(true);
+        let selected = '';
+        const formData = ref({
+          codigo: '',
+          numero: '',
+          pabellon: ''
+        });
+  
+        function submitForm() {
+          if (!selectedType.value) {
+            selectedTypeValid.value = false; // Set validation state to false if no value is selected
+          } else {
+            selectedTypeValid.value = true;
+            // Handle form submission logic here
+            console.log(formData.value);
+            visible.value = false;
+            resetForm();
+          }
+        }
+  
+        const handleDropdownChange = () => {
+          selected = selectedType.value.name
+          selectedTypeValid.value = true;
+        }
+  
+        function resetForm() {
+          formData.value.codigo = '';
+          formData.value.numero = '';
+          formData.value.pabellon = '';
+        }
+  
+        return { visible, selectedType, selectedTypeValid, formData, submitForm, handleDropdownChange, resetForm };
+      },
+    methods:{
+        agregarInput(salon) {
+          this.actualizarSalon = {
+            codigo: salon.data.codigo,
+            numero: salon.data.numero,
+            pabellon: salon.data.pabellon,
+          };
+        },
+        updateSalon(e) {
+          //e.preventDefault();
+          var config_request = {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+          };
+  
+          axios
+            .patch(this.postURL + '/salon', this.actualizarSalon, { config_request })
+            .then(res => {
+              const index = this.salones.findIndex(salon => salon.codigo === this.actualizarSalon.codigo);
+              if (index !== -1) {
+                this.salones[index] = this.actualizarSalon;
+              }
+              console.log(res.data);
+            })
+            .catch(error => {
+              console.log(error);
+            });
+  
+          this.actualizarSalon = {};
+          this.visible = false;
+        },
+        deleteSalon(salon){  
+                    var config_request={
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': '*'
+                    }
+                    axios.delete(this.postURL + '/salon', {data: {codigo: salon.data.codigo},  config_request })
+                        .then(res => {                      
+                            this.salones.splice(this.salones.indexOf(salon), 1);
+                            console.log(res.data);
+                        })
+                        .catch((error) => {
+                            console.log(error)
+                        }); 
+                }
     },
     created() {
         axios.post(this.postURL + '/salones')

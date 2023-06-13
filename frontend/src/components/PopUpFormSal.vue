@@ -1,16 +1,17 @@
 <template>
     <div class="card flex justify-content-center">
-      <Button label="Agregar Salón" icon="pi pi-plus" severity="success" @click="visible = true" />
-      <Dialog v-model:visible="visible" modal header="Agregar Salón" :style="{ width: '50vw' }">
-        <form @submit.prevent="submitForm" class="form-container">
+      <Button label="Agregar Salon" icon="pi pi-plus" severity="success" @click="visible = true" />
+      <Dialog v-model:visible="visible" modal header="Agregar Salon" :style="{ width: '50vw' }">
+        <form @submit="createSalon" class="form-container">
+  
           <div class="form-row">
-            <label for="pabellon">Pabellón</label>
-            <InputText id="pabellon" v-model="formData.pabellon" placeholder="A" required requiredMessage="Ingrese un pabellón"/>
+            <label for="numero">Numero</label>
+            <InputText id="numero" v-model="formData.numero" required requiredMessage="Ingrese un número de aula" />
           </div>
   
           <div class="form-row">
-            <label for="numero">Número de Salón</label>
-            <InputText id="numero" v-model="formData.numero" placeholder="1" required requiredMessage="Ingrese un nombre" />
+            <label for="pabellon">Pabellon</label>
+            <InputText id="pabellon" v-model="formData.pabellon" required requiredMessage="Ingrese un pabellon"/>
           </div>
 
           <div class="container">
@@ -23,28 +24,81 @@
     </div>
 </template>
   
-<script setup>
-  import { ref } from "vue";
+<script>
+    import axios from 'axios'
+    import { ref } from "vue";
   
-  const visible = ref(false);
-  const formData = ref({
-    pabellon: '',
-    numero: ''
+    export default {
+      data() {
+        return {
+          salones: [],
+          newSalon: {},
+          postURL: 'http://127.0.0.1:5000',
+          config_request: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+          },
+        };
+      },
+      setup() {
+        const visible = ref(false);
+        const selectedType = ref('');
+        const selectedTypeValid = ref(true);
+        let selected = '';
+        const formData = ref({
+          numero: '',
+          pabellon: ''
+        });
 
-  });
-  
   function submitForm() {
-    // Handle form submission logic here
-      console.log(formData.value);
-      visible.value = false;
-      resetForm();
-
-  }
-  
-  function resetForm() {
-    formData.value.pabellon = '';
-    formData.value.numero = '';
+    if (!selectedType.value) {
+        selectedTypeValid.value = false; // Set validation state to false if no value is selected
+    } else {
+        selectedTypeValid.value = true;
+        // Handle form submission logic here
+        console.log(formData.value);
+        visible.value = false;
+        resetForm();
     }
+  }
+  const handleDropdownChange = () => {
+          selected = selectedType.value.name
+          selectedTypeValid.value = true;
+        }
+  
+        function resetForm() {
+          formData.value.numero = '';
+          formData.value.pabellon = '';
+        }
+  
+        return { visible, selectedType, selectedTypeValid, formData, submitForm, handleDropdownChange, resetForm };
+      },
+      methods: {
+        createSalon() {
+          var config_request = {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+          };
+          axios
+            .put(this.postURL + "/salon", this.formData, { headers: config_request })
+            .then(res => {
+              this.salones.push(res.data);
+              console.log(res.data);
+            })
+            .catch(error => {
+              console.log(error);
+            });
+
+          this.visible = false;
+          this.resetForm();
+        },
+      },
+      created() {
+        axios.post(this.postURL + '/salones')
+          .then((res) => { this.salones = res.data; })
+          .catch((error) => { console.log(error) })
+      },
+    };
 </script>
 
 <style scoped>

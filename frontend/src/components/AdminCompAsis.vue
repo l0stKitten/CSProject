@@ -8,7 +8,11 @@
         <DataTable :value="asistencias" paginator :rows="5" :rowsPerPageOptions="[5, 10, 20, 50]" tableStyle="min-width: 50rem">
             <Column field="nombre" header="Curso"></Column>
             <Column field="full_name" sortable header="Alumno"></Column>
-            <Column field="fecha_asistencia" sortable header="Fecha Asistencia"></Column>
+            <Column field="fecha_asistencia" sortable header="Fecha Asistencia">
+                <template #body="rowData">
+                    {{ formatDate(rowData.data.fecha_asistencia) }}
+                </template>
+            </Column>
             <Column field="estado" header="Estado" dataType="boolean" bodyClass="text-center" style="min-width: 8rem">
                 <template #body="{ data }">
                     <i class="pi" :class="{ 'pi-check-circle text-green-500 ': data.estado, 'pi-times-circle text-red-500': !data.estado }"></i>
@@ -20,12 +24,12 @@
             </Column>
             <Column header="Editar">
                 <template #body>
-                    <Button label="Editar" severity="warning"></Button>
+                    <Button icon="pi pi-fw pi-pencil" label="" severity="warning"></Button>
                 </template>
             </Column>
             <Column header="Eliminar"> ¿
-                <template #body>
-                    <Button label="Eliminar" severity="danger"></Button>
+                <template #body="rowData">
+                    <Button icon="pi pi-fw pi-trash" label="" severity="danger" @click="deleteAsistencia(rowData)"></Button>
                 </template>
             </Column>
         </DataTable>
@@ -48,10 +52,37 @@
             },
         };
     },
+    methods:{
+            
+        deleteAsistencia(asistencia){  
+                var config_request={
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                }
+                axios.delete(this.postURL + '/asistencia', {data: {codigo: asistencia.data.codigo},  config_request })
+                    .then(res => {                      
+                        this.asistencias.splice(this.asistencias.indexOf(asistencia), 1);
+                        console.log(res.data);
+                    })
+                    .catch((error) => {
+                        console.log(error)
+                    }); 
+            }
+    },
     created() {
         axios.post(this.postURL + '/asistencias')
             .then((res) => { this.asistencias = res.data; })
             .catch((error) => { console.log(error) })
+    }, computed: {
+        formatDate() {
+        return (dateString) => {
+            const date = new Date(dateString);
+            const day = date.getDate().toString().padStart(2, "0");
+            const month = (date.getMonth() + 1).toString().padStart(2, "0");
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        };
+        },
     },
     components: { PopUpFormAsis, MenuCompAd }
 };

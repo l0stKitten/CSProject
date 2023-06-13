@@ -2,78 +2,32 @@
     <div class="card flex justify-content-center">
       <Button label="Agregar Asistencia" icon="pi pi-plus" severity="success" @click="visible = true" />
       <Dialog v-model:visible="visible" modal header="Agregar Asistencia" :style="{ width: '50vw' }">
-        <form @submit.prevent="submitForm" class="form-container">
+        <form @submit.prevent="createAsistencia" class="form-container">
           <div class="form-row">
-            <label for="dni">DNI</label>
-            <InputText id="dni" v-model="formData.dni" required requiredMessage="Ingrese un DNI"/>
+            <label for="dni">DNI Alumno</label>
+            <InputText id="dni" v-model="formData.dni" required requiredMessage="Ingrese el DNI del alumno"/>
           </div>
   
           <div class="form-row">
-            <label for="nombres">Nombres</label>
-            <InputText id="nombres" v-model="formData.nombres" required requiredMessage="Ingrese un nombre" />
-          </div>
-  
-          <div class="form-row">
-            <label for="apellido_paterno">Apellido Paterno</label>
-            <InputText id="apellido_paterno" v-model="formData.apellido_paterno" required requiredMessage="Ingrese el apellido paterno"/>
-          </div>
-  
-          <div class="form-row">
-            <label for="apellido_materno">Apellido Materno</label>
-            <InputText id="apellido_materno" v-model="formData.apellido_materno" required requiredMessage="Ingrese el apellido materno"/>
-          </div>
-  
-          <div class="form-row">
-            <label for="fecha_nacimiento">Fecha Nacimiento</label>
+            <label for="fecha_asistencia">Fecha asistencia</label>
             <div class="p-inputgroup flex-1">
                 <span class="p-inputgroup-addon">
                     <i class="pi pi-calendar"></i>
                 </span>
-                <Calendar id="fecha_nacimiento" v-model="formData.fecha_nacimiento" touchUI required />
+                <Calendar id="fecha_asistencia" v-model="formData.fecha_asistencia" touchUI required />
             </div>
             
           </div>
   
           <div class="form-row">
-            <label for="email">Email</label>
-            <InputText id="email" v-model="formData.email" placeholder="usuario@email.com" required requiredMessage="Ingrese el email" type="email" />
-          </div>
-  
-          <div class="form-row">
-            <label for="password">Contraseña</label>
-            <Password id="password" v-model="formData.password" toggleMask required />
+            <label for="matricula">Matricula</label>
+            <InputText id="matricula" v-model="formData.matricula" required requiredMessage="Ingrese el codigo de matricula"/>
           </div>
   
           <div class="form-row">
             <label for="path">Foto</label>
             <FileUpload id="path" mode="basic" name="demo[]" url="/api/upload" accept="image/*" customUpload @uploader="customBase64Uploader" />
           </div>
-          
-          <div class="form-row">
-            <label for="tipo">Tipo</label>
-            <Dropdown v-model="selectedType" :options="tipos" optionLabel="name" placeholder="Selecciona un tipo" class="w-full md:w-14rem" @change="handleDropdownChange"/>
-            <div v-if="!selectedTypeValid" class="error-message">Por favor, selecciona un tipo.</div>
-          </div>
-
-        <div v-if="selected === 'Administrador'"> 
-            <div class="form-row">
-                <label for="cargo">Cargo</label>
-                <InputText id="cargo" v-model="formData.cargo"/>
-            </div>
-        </div>
-        <div v-else-if="selected === 'Profesor'"> 
-            <div class="form-row">
-                <label for="especialidad">Especialidad</label>
-                <InputText id="especialidad" v-model="formData.especialidad" />
-            </div>
-            
-        </div>
-        <div v-else> 
-            <div class="form-row">
-                <label for="alumno"></label>
-            </div>
-            
-        </div>
 
           <div class="container">
             <Button label="Agregar" icon="pi pi-plus" type="submit" />
@@ -84,34 +38,34 @@
       </Dialog>
     </div>
 </template>
-  
-<script setup>
-  import { ref } from "vue";
-  
-  const visible = ref(false);
-  const selectedType = ref('');
-  const selectedTypeValid = ref(true);
-  let selected = '';
-  const formData = ref({
-    dni: '',
-    nombres: '',
-    apellido_paterno: '',
-    apellido_materno: '',
-    fecha_nacimiento: '',
-    email: '',
-    password: '',
-    path: '',
-    cargo: '',
-    especialidad: ''
 
-  });
+<script>
+  import axios from 'axios';
+  import { ref } from 'vue';
 
-  const tipos = ref([
-    { name: 'Alumno', code: 'al' },
-    { name: 'Profesor', code: 'pro' },
-    { name: 'Administrador', code: 'ad' }
-]);
-
+  export default {
+    data() {
+        return {
+          asistencias: [],
+          newAsistencia: {},
+          postURL: 'http://127.0.0.1:5000',
+          config_request: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+          },
+        };
+      },
+    setup() {
+      const visible = ref(false);
+      const selectedType = ref('');
+      const selectedTypeValid = ref(true);
+      let selected = '';
+      const formData = ref({
+        dni: '',
+        fecha_asistencia: '',
+        matricula: '',
+        path: '',
+      });
   const customBase64Uploader = async (event) => {
         const file = event.files[0];
         const reader = new FileReader();
@@ -125,7 +79,7 @@
         };
     };
   
-  function submitForm() {
+    function submitForm() {
     if (!selectedType.value) {
         selectedTypeValid.value = false; // Set validation state to false if no value is selected
     } else {
@@ -136,25 +90,46 @@
         resetForm();
     }
   }
-
-  const handleDropdownChange = () =>  {
-      selected = selectedType.value.name
-      selectedTypeValid.value = true;
-    }
+  const handleDropdownChange = () => {
+          selected = selectedType.value.name
+          selectedTypeValid.value = true;
+        }
   
-  function resetForm() {
-    formData.value.dni = '';
-    formData.value.nombres = '';
-    formData.value.apellido_paterno = '';
-    formData.value.apellido_materno = '';
-    formData.value.fecha_nacimiento = '';
-    formData.value.email = '';
-    formData.value.password = '';
-    formData.value.path = '';
-    formData.value.cargo = '';
-    formData.value.especialidad = '';
-    selectedType.value = '';
-    }
+        function resetForm() {
+          formData.value.dni = '';
+          formData.value.fecha_asistencia = '';
+          formData.value.matricula = '';
+          formData.value.path = '';
+        }
+  
+        return { visible, selectedType, selectedTypeValid, formData, submitForm, handleDropdownChange, resetForm };
+      },
+      methods: {
+        createAsistencia() {
+          var config_request = {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+          };
+          axios
+            .put(this.postURL + "/asistencia", this.formData, { headers: config_request })
+            .then(res => {
+              this.asistencias.push(res.data);
+              console.log(res.data);
+            })
+            .catch(error => {
+              console.log(error);
+            });
+
+          this.visible = false;
+          this.resetForm();
+        },
+      },
+      created() {
+        axios.post(this.postURL + '/asistencias')
+          .then((res) => { this.asistencias = res.data; })
+          .catch((error) => { console.log(error) })
+      },
+    };
 </script>
 
 <style scoped>

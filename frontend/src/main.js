@@ -10,6 +10,8 @@ import "primevue/resources/themes/lara-light-indigo/theme.css";
 import "primevue/resources/primevue.min.css";
 import 'primeicons/primeicons.css';
 
+import ToastService from 'primevue/toastservice';
+
 // para navegacion
 //import VueRouter from 'vue-router'
 import { createRouter, createWebHistory  } from 'vue-router';
@@ -40,6 +42,7 @@ import Card from 'primevue/card';
 const app = createApp(App);
 app.use(PrimeVue);
 
+app.use(ToastService);
 
 // aqui agregamos el componente ******************************************
 app.component('Button', Button);
