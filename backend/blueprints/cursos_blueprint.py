@@ -33,9 +33,14 @@ def delete_curso():
 @cursos_blueprint.route('/curso', methods=['POST'])
 @cross_origin()
 def get_curso():
-    return jsonify(model.get_curso(request.json['codigo']))
+    return json.dumps(model.get_curso(request.json['codigo']), default=str)
 
 @cursos_blueprint.route('/cursos', methods=['POST'])
 @cross_origin()
 def get_cursos():
-    return jsonify(model.get_cursos())
+    return json.dumps(model.get_cursos(), default=str)
+
+@cursos_blueprint.route('/cursosuser', methods=['POST'])
+@cross_origin()
+def get_cursos_user():
+    return json.dumps(model.get_cursos_usuario(request.json['dni']), default=str)
