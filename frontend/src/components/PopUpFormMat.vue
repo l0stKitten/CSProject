@@ -5,16 +5,19 @@
         <form @submit="createMatricula" class="form-container">
           <div class="form-row">
             <label for="alumno">DNI Alumno</label>
-            <InputText id="alumno" v-model="formData.alumno" required requiredMessage="Ingrese el DNI del alumno"/>
+            <Dropdown v-model="selectedType" editable :options="alumnos" optionLabel="nombres" placeholder="Selecciona un alumno" class="w-full md:w-14rem" />
+            <!--<InputText id="alumno" v-model="formData.alumno" required requiredMessage="Ingrese el DNI del alumno"/>-->
           </div>
   
           <div class="form-row">
             <label for="curso">Curso</label>
+            <!--<Dropdown v-model="selectedType" editable :options="cursos" optionLabel="asig_nombre" placeholder="Selecciona un curso" class="w-full md:w-14rem"  />-->
             <InputText id="curso" v-model="formData.curso" required requiredMessage="Ingrese un curso" />
           </div>
   
           <div class="form-row">
             <label for="estado">Estado</label>
+            <!--<Dropdown v-model="selectedType" editable :options="tipos" optionLabel="name" placeholder="Selecciona un estado" class="w-full md:w-14rem" />-->
             <InputText id="estado" v-model="formData.estado" required requiredMessage="Ingrese el estado"/>
           </div>
 
@@ -35,7 +38,7 @@
     export default {
       data() {
         return {
-          matriculas: [],
+          alumnos: [],
           newMatricula: {},
           postURL: 'http://127.0.0.1:5000',
           config_request: {
@@ -49,11 +52,22 @@
         const selectedType = ref('');
         const selectedTypeValid = ref(true);
         let selected = '';
+
+        const dataDropdown = ref({
+          alumno: '',
+          cursos: ''
+        })
         const formData = ref({
           alumno: '',
           curso: '',
           estado: ''
         });
+
+        const tipos = ref([
+          { name: 'Regular', code: '1' },
+          { name: 'Retirado', code: '2' },
+          { name: 'Abandono', code: '0' }
+      ]);
 
     function submitForm() {
       if (!selectedType.value) {
@@ -66,10 +80,7 @@
           resetForm();
       }
     }
-    const handleDropdownChange = () => {
-          selected = selectedType.value.name
-          selectedTypeValid.value = true;
-        }
+        
   
         function resetForm() {
           formData.value.alumno = '';
@@ -77,7 +88,7 @@
           formData.value.estado = '';
         }
   
-        return { visible, selectedType, selectedTypeValid, formData, submitForm, handleDropdownChange, resetForm };
+        return { visible, selectedType, selectedTypeValid, formData, submitForm, resetForm };
       },
       methods: {
         createMatricula() {
@@ -103,6 +114,15 @@
         axios.post(this.postURL + '/matriculas')
           .then((res) => { this.matriculas = res.data; })
           .catch((error) => { console.log(error) })
+
+        axios.post(this.postURL + '/alumnos')
+          .then((res) => { this.alumnos = res.data; })
+          .catch((error) => { console.log(error) })
+        
+        axios.post(this.postURL + '/cursos')
+          .then((res) => { this.cursos = res.data; })
+          .catch((error) => { console.log(error) })
+        
       },
     };
 </script>

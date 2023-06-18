@@ -17,25 +17,30 @@
                 <template #body="rowData">
                     <Button icon="pi pi-fw pi-pencil" label="" severity="warning" @click="agregarInput(rowData); visible = true"></Button>
                     <Dialog v-model:visible="visible" modal header="Editar Salon" :style="{ width: '50vw' }">
-                    <form @submit="updateSalon" class="form-container">
-                        <div class="form-row">
-                        <label for="codigo">Codigo</label>
-                        <InputText id="codigo" v-model="actualizarSalon.codigo" required requiredMessage="Ingrese un codigo"/>
+                    <form @submit="updateSalon" >
+                        <div class="form-container">
+                            <!--<div class="form-row">
+                            <label for="codigo">Codigo</label>
+                            <InputText id="codigo" v-model="actualizarSalon.codigo" required requiredMessage="Ingrese un codigo"/>
+                            </div>-->
+            
+                            <div class="form-row">
+                            <label for="numero">Numero</label>
+                            <InputText id="numero" v-model="actualizarSalon.numero" required requiredMessage="Ingrese un número de aula" />
+                            </div>
+            
+                            <div class="form-row">
+                            <label for="pabellon">Pabellon</label>
+                            <InputText id="pabellon" v-model="actualizarSalon.pabellon" required requiredMessage="Ingrese un pabellon"/>
+                            </div>
                         </div>
-        
-                        <div class="form-row">
-                        <label for="numero">Numero</label>
-                        <InputText id="numero" v-model="actualizarSalon.numero" required requiredMessage="Ingrese un número de aula" />
-                        </div>
-        
-                        <div class="form-row">
-                        <label for="pabellon">Pabellon</label>
-                        <InputText id="pabellon" v-model="actualizarSalon.pabellon" required requiredMessage="Ingrese un pabellon"/>
-                        </div>
+                        
                         <div class="container">
-                        <Button label="Actualizar" icon="pi pi-check" type="submit" />
-                        <Button label="Cancelar" icon="pi pi-times" @click="visible = false" text />
+                            <Button label="Actualizar" icon="pi pi-check" type="submit" />
+                            <Button label="Cancelar" icon="pi pi-times" @click="visible = false" text />
                         </div>
+                        
+                        
                     </form>
                     </Dialog>
                 </template>
@@ -54,6 +59,7 @@
     import axios from 'axios'
     import PopUpFormSal from './PopUpFormSal.vue';
     import MenuCompAd from './MenuCompAd.vue';
+    import { ref } from "vue";
 
     export default {
         data() {
@@ -174,5 +180,24 @@
     .right-align {
         display: flex;
         justify-content: flex-end;
+    }
+
+    .form-container {
+    display: grid;
+    grid-template-columns: repeat(2, 5fr); /* Adjust the number of columns as needed */
+    gap: 2rem;
+    margin-bottom: 30px;
+    }
+    
+    .form-row {
+        display: grid;
+        grid-column: span 1; /* Make the form-row span 2 columns */
+    }
+
+
+    .container {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
     }
 </style>
