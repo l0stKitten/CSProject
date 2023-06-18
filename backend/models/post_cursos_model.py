@@ -6,16 +6,17 @@ class CursoModel:
 
     def get_curso(self, curso_codigo):    
         params = {'codigo' : curso_codigo}      
-        rv = self.post_pool.execute("""SELECT c.codigo, c.asignatura, a.nombre as asig_nombre, c.profesor, CONCAT(p.nombres, ' ', p.apellido_paterno, ' ', p.apellido_materno) as fullname,  c.horario from cursos c 
+        rv = self.post_pool.execute("""SELECT c.codigo, c.asignatura, a.nombre as asig_nombre, c.profesor, CONCAT(p.nombres, ' ', p.apellido_paterno, ' ', p.apellido_materno) as fullname, 
+                                            h.hora_inicio, h.hora_fin, h.dia from cursos c 
                                             inner join profesores pr ON c.profesor = pr.dni 
                                             inner join personas p on pr.dni = p.dni 
                                             inner join asignaturas a on a.codigo = c.asignatura 
                                             inner join horarios h on h.codigo = c.horario 
-                                            where c.codigo=%(codigo)s""", params)                
+                                            where c.codigo=%(codigo)s""", params)               
         data = []
         content = {}
         for result in rv:
-            content = {'codigo': result[0], 'asignatura': result[1], 'asig_nombre': result[2], 'profesor': result[3], 'fullname': result[4], 'horario': result[5]}
+            content = {'codigo': result[0], 'asignatura': result[1], 'asig_nombre': result[2], 'profesor': result[3], 'fullname': result[4], 'hora_inicio': result[5], 'hora_fin': result[6], 'dia': result[7] }
             data.append(content)
             content = {}
         return data
@@ -26,6 +27,24 @@ class CursoModel:
         content = {}
         for result in rv:
             content = {'codigo': result[0], 'asignatura': result[1], 'asig_nombre': result[2], 'profesor': result[3], 'fullname': result[4], 'horario': result[5]}
+            data.append(content)
+            content = {}
+        return data
+
+    def get_cursos_usuario(self, dni):  
+        params = {'dni' : dni}    
+        rv = self.post_pool.execute("""SELECT c.codigo, c.asignatura, a.nombre as asig_nombre, c.profesor, CONCAT(p.nombres, ' ', p.apellido_paterno, ' ', p.apellido_materno) as fullname,  
+                                            h.hora_inicio, h.hora_fin, h.dia from cursos c 
+                                            inner join profesores pr ON c.profesor = pr.dni 
+                                            inner join personas p on pr.dni = p.dni inner join asignaturas a on a.codigo = c.asignatura 
+                                            inner join horarios h on h.codigo = c.horario
+                                            inner join matriculas m on m.curso = c.codigo
+                                            inner join alumnos al on al.dni = m.alumno
+                                            where al.dni=%(dni)s""", params)  
+        data = []
+        content = {}
+        for result in rv:
+            content = {'codigo': result[0], 'asignatura': result[1], 'asig_nombre': result[2], 'profesor': result[3], 'fullname': result[4], 'hora_inicio': result[5], 'hora_fin': result[6], 'dia': result[7] }
             data.append(content)
             content = {}
         return data
