@@ -20,7 +20,7 @@ class PostgreSQLPool(object):
     """
 
     def __init__(self):             
-        self.pool = self.create_pool(min_con=1, max_con=60)
+        self.pool = self.create_pool(min_con=1, max_con=900)
 
     def create_pool(self, min_con, max_con):
         """

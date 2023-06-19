@@ -85,7 +85,7 @@ import ProfComCofPass from './components/ProfComCofPass'
 import AlumnoCom from './components/AlumnoCom'
 import AlumComConf from './components/AlumComConf'
 import AlumComCofPass from './components/AlumComCofPass'
-import AlumComUAT from './components/AlumComUAT'
+import AlumComAsis from './components/AlumComAsis'
 import AlumComUJT from './components/AlumComUJT'
 import AlumComPart from './components/AlumComPart'
 
@@ -111,7 +111,7 @@ const routes = [
     { path: '/alum', component: AlumnoCom },
     { path: '/alum/config', component: AlumComConf },
     { path: '/alum/config/password', component: AlumComCofPass },
-    { path: '/alum/asis', component: AlumComUAT },
+    { path: '/alum/asis', component: AlumComAsis },
     { path: '/alum/just', component: AlumComUJT },
     { path: '/alum/part', component: AlumComPart },
   ]
