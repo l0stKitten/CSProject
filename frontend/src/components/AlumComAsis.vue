@@ -7,6 +7,7 @@
     </div>
 
     <div class="card-grid">
+        
       <Card v-for="cu in cursosuser" :key="cu.codigo" style="width: 25em">
         <template #title>{{ cu.asig_nombre }}</template>
         <template #subtitle>{{ cu.fullname }}</template>
@@ -16,12 +17,7 @@
         <template #footer>
             <Button v-if="isButtonVisible(cu) && noasis" @click="visible = true" icon="pi pi-check-circle" severity="warning" label="Marcar Asistencia" />
             <Dialog v-model:visible="visible" modal header="Agregar Foto" :style="{ width: '50vw' }">
-                    <video ref="videoElement" autoplay></video>
-                    <div class="button-container">
-                        <Button icon="pi pi-fw pi-play" @click="startCamera" label="Prender Camera" />
-                        <Button icon="pi pi-fw pi-pause" @click="stopCamera" label="Detener Camera" />
-                        <Button icon="pi pi-fw pi-camera" @click="captureImage(cu.codigom)" label="Tomar Asistencia" />
-                    </div>
+                <WebCam :cu="cu"/>
             </Dialog>
         </template>
       </Card>
@@ -31,166 +27,151 @@
 <script>
     import axios from 'axios'
     import MenuCompAl from './MenuCompAl.vue';
-    import ModalWebcam from './ModalWebcam.vue';
+    import WebCam from './WebCam.vue';
     import { ref } from "vue";
 
     export default {
+
         components: {
             MenuCompAl,
-            ModalWebcam
+            WebCam
         }, data() {
-        return {
-            noasis: true,
-            visible: false,
-            today: new Date(),
-            showWebcamModal: false,
-            cursosuser: [],
-            postURL: 'http://127.0.0.1:5000',
-            config_request: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            },
-        }
-    },
-    methods: {
-        openModal() {
-            this.showWebcamModal = true;
-        },
-        currentDay() {
-            const today = new Date(); //comentar y usar this.today para conseguir que el usuario no pueda cambiar la fecha a su gusto
-            const options = { weekday: 'long' };
-            const today_day = today.toLocaleDateString('en-US', options);
-            console.log(today_day)
-            var dia = ""
-            if (today_day == "Monday"){
-                dia = "L"
-            } else if (today_day == "Tuesday"){
-                dia = "M"
-            } else if (today_day == "Wednesday"){
-                dia = "X"
-            } else if (today_day == "Thursday"){
-                dia = "J"
-            } else if (today_day == "Friday"){
-                dia = "V"
-            } else if (today_day == "Saturday"){
-                dia = "S"
-            } else if (today_day == "Sunday"){
-                dia = "D"
-            }
-            return dia // Get the current day using the utility function
-        },
-        isButtonVisible(cu) {
-            var show = false;
-            var day_week = this.currentDay()
-
-            if (day_week === cu.dia){
-                const today = new Date();
-                const year = today.getFullYear();
-                const month = String(today.getMonth() + 1).padStart(2, "0");
-                const day = String(today.getDate()).padStart(2, "0");
-
-                const date1 = new Date(`${year}-${month}-${day}T${cu.hora_inicio}`);
-                const date2 = new Date(`${year}-${month}-${day}T${cu.hora_fin}`);
-
-                console.log(date1)
-                console.log(date2)
-                console.log(today)
-
-                if (today >= date1 && today <= date2) {
-                    show = true
-                }
-            } else {
-                console.log("No es el día " + day_week)
-            }
-            return show;
-        }, startCamera() {
-            navigator.mediaDevices
-            .getUserMedia({ video: true })
-            .then((stream) => {
-                this.mediaStream = stream;
-                this.$refs.videoElement.srcObject = stream;
-            })
-            .catch((error) => {
-                console.log('Error accessing camera:', error);
-            });
-        },
-        stopCamera() {
-            if (this.mediaStream) {
-            this.mediaStream.getTracks().forEach((track) => {
-                track.stop();
-            });
-            this.$refs.videoElement.srcObject = null;
-            this.mediaStream = null;
-            }
-        },
-        captureImage(matri) {
-            const canvas = document.createElement('canvas');
-            const video = this.$refs.videoElement;
-    
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-    
-            const context = canvas.getContext('2d');
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-            // Convert canvas data to a Blob object
-            canvas.toBlob((blob) => {
-                // Create a File object from the Blob
-                const fil = new File([blob], 'captured-image.png', { type: 'image/png' });
-
-                // You can perform further processing with the captured image here
-                var config_request = {
-                    "Content-Type": "application/json",
-                    "Access-Control-Allow-Origin": "*"
-                };
-
-                var data = {
-                    path: fil,
-                    fecha_asistencia: this.today,
-                    matricula: matri
-                };
-        
-                axios.put(`${this.postURL}/asistencia`, data, config_request)
-                    .then((res) => {
-                    console.log(res.data);
-                    })
-                    .catch((error) => {
-                    console.log(error);
-                    });
-
-                // Close the modal after capturing the image
-                this.closeModal();
-                this.noasis = false
-            }, 'image/png');
-    
-            
-        },
-        closeModal() {
-            this.visible = false;
-        },
-    },
-    created() {
-        axios.post(this.postURL + '/cursosuser', {dni: "11000010"},  {
+            return {
+                noasis: true,
+                visible: false,
+                visible_video: false,
+                today: new Date(),
+                showWebcamModal: false,
+                cursosuser: [],
+                postURL: 'http://127.0.0.1:5000',
+                config_request: {
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*'
-                } )
-        
-            .then((res) => { this.cursosuser = res.data; })
-            .catch((error) => { console.log(error) })
-        
-        axios.get('http://worldtimeapi.org/api/timezone/America/Lima')
-            .then(response => {
-                const { datetime } = response.data;
-                const currentTime = new Date(datetime);
-                this.today = currentTime
-                // Use the current date and time in your application
-                console.log(currentTime);
-                console.log(this.today)
-            })
-            .catch(error => {
-                console.error('Error fetching current date and time:', error);
-            });
-    }
+                },
+                photo: null,
+                stream: null,
+            }
+        },
+        methods: {
+            openModal() {
+                this.showWebcamModal = true;
+            },
+            currentDay() {
+                const today = new Date(); //comentar y usar this.today para conseguir que el usuario no pueda cambiar la fecha a su gusto
+                const options = { weekday: 'long' };
+                const today_day = today.toLocaleDateString('en-US', options);
+                console.log(today_day)
+                var dia = ""
+                if (today_day == "Monday"){
+                    dia = "L"
+                } else if (today_day == "Tuesday"){
+                    dia = "M"
+                } else if (today_day == "Wednesday"){
+                    dia = "X"
+                } else if (today_day == "Thursday"){
+                    dia = "J"
+                } else if (today_day == "Friday"){
+                    dia = "V"
+                } else if (today_day == "Saturday"){
+                    dia = "S"
+                } else if (today_day == "Sunday"){
+                    dia = "D"
+                }
+                return dia // Get the current day using the utility function
+            },
+            isButtonVisible(cu) {
+                var show = false;
+                var day_week = this.currentDay()
+
+                if (day_week === cu.dia){
+                    const today = new Date();
+                    const year = today.getFullYear();
+                    const month = String(today.getMonth() + 1).padStart(2, "0");
+                    const day = String(today.getDate()).padStart(2, "0");
+
+                    const date1 = new Date(`${year}-${month}-${day}T${cu.hora_inicio}`);
+                    const date2 = new Date(`${year}-${month}-${day}T${cu.hora_fin}`);
+
+                    console.log(date1)
+                    console.log(date2)
+                    console.log(today)
+
+                    if (today >= date1 && today <= date2) {
+                        show = true
+                    }
+                } else {
+                    console.log("No es el día " + day_week)
+                }
+                return show;
+            },
+            captureImage(matri) {     
+
+                const canvas = document.createElement('canvas');
+                const video = this.$refs.videoElement;
+
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+
+                const context = canvas.getContext('2d');
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                this.photo = canvas.toDataURL("image/png");
+
+                // Convert canvas data to a Blob object
+                canvas.toBlob((blob) => {
+                    // Create a File object from the Blob
+                    const fil = new File([blob], 'captured-image.png', { type: 'image/png' });
+
+                    // You can perform further processing with the captured image here
+                    var config_request = {
+                        "Content-Type": "application/json",
+                        "Access-Control-Allow-Origin": "*"
+                    };
+
+                    var data = {
+                        path: fil,
+                        fecha_asistencia: this.today,
+                        matricula: matri
+                    };
+
+                    axios.put(`${this.postURL}/asistencia`, data, config_request)
+                        .then((res) => {
+                        console.log(res.data);
+                        })
+                        .catch((error) => {
+                        console.log(error);
+                        });
+
+                    // Close the modal after capturing the image
+                    this.closeModal();
+                    this.noasis = false
+                }, 'image/png');
+
+
+                }
+        },
+        created() {
+            axios.post(this.postURL + '/cursosuser', {dni: "71218699"},  {
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': '*'
+                    } )
+            
+                .then((res) => { this.cursosuser = res.data; })
+                .catch((error) => { console.log(error) })
+            
+            axios.get('http://worldtimeapi.org/api/timezone/America/Lima')
+                .then(response => {
+                    const { datetime } = response.data;
+                    const currentTime = new Date(datetime);
+                    this.today = currentTime
+                    // Use the current date and time in your application
+                    console.log(currentTime);
+                    console.log(this.today)
+                })
+                .catch(error => {
+                    console.error('Error fetching current date and time:', error);
+                });
+        }
 };
 </script>
 
@@ -219,8 +200,12 @@
     width: 100%;
   }
 
-  .button-container {
-    display: flex;
-    justify-content: space-between;
+  
+
+    @media (max-width: 767px) {
+        .camera-container {
+        flex-direction: column;
+        }
     }
+
 </style>

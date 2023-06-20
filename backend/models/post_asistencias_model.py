@@ -43,10 +43,11 @@ class AsistenciaModel:
 
     def create_asistencia(self, path, fecha_asistencia, matricula, dni):    
         #tomar una imagen
-        endpoint_url = "http://127.0.0.1:81/openfaceAPI"
-        f = {"file": open("{}".format(path), "rb")}
-        vec = requests.post(endpoint_url, files=f) 
-        res = vec.json()
+        #endpoint_url = "http://127.0.0.1:81/openfaceAPI"
+        #f = {"file": open(path, "rb")}
+        #vec = requests.post(endpoint_url, files=f) 
+        #res = vec.json()
+        res = path
         vector1 = res["result"].replace('[', '').replace(']', '').split()
         vector11 = [float(numeric_string) for numeric_string in vector1]
         print("vector 11 ", vector11)
@@ -72,8 +73,10 @@ class AsistenciaModel:
             'fecha_asistencia' : fecha_asistencia,
             'matricula' : matricula
         }  
-        query = """insert into asistencias (estado, fecha_asistencia, matricula) values (%(estado)s, %(fecha_asistencia)s, %(matricula)s)"""    
-        cursor = self.post_pool.execute(query, data, commit=True)  
+
+        if estado == True:
+            query = """insert into asistencias (estado, fecha_asistencia, matricula) values (%(estado)s, %(fecha_asistencia)s, %(matricula)s)"""    
+            cursor = self.post_pool.execute(query, data, commit=True)  
         return data
 
     def update_asistencia(self, codigo_asistencia, estado, fecha_asistencia, matricula):    

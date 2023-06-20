@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 
+
 // import
 import PrimeVue from 'primevue/config';
 
@@ -16,6 +17,10 @@ import ToastService from 'primevue/toastservice';
 //import VueRouter from 'vue-router'
 import { createRouter, createWebHistory  } from 'vue-router';
 
+
+//Sweet Alert
+import VueSweetalert2 from 'vue-sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
 
 // cada componente se importa de forma separada +++++++++++++++++++++++++
 import DataTable from 'primevue/datatable';
@@ -88,6 +93,7 @@ import AlumComCofPass from './components/AlumComCofPass'
 import AlumComAsis from './components/AlumComAsis'
 import AlumComUJT from './components/AlumComUJT'
 import AlumComPart from './components/AlumComPart'
+import WebCam from './components/WebCam'
 
 const routes = [
     { path: '/', component: Login },
@@ -114,6 +120,8 @@ const routes = [
     { path: '/alum/asis', component: AlumComAsis },
     { path: '/alum/just', component: AlumComUJT },
     { path: '/alum/part', component: AlumComPart },
+
+    { path: '/alum/asis/webcam', component: WebCam },
   ]
 
 const router = createRouter({
@@ -123,6 +131,7 @@ const router = createRouter({
 })
 
 app.use(router)
+app.use(VueSweetalert2);
 
 app.mount("#app")
 
