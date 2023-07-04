@@ -6,12 +6,10 @@
             </template>
 
             <template #end>
-                <router-link to="/">
-                    <button class="w-full p-link flex align-items-center p-2 pl-4 text-color hover:surface-200 border-noround">
+                    <button class="w-full p-link flex align-items-center p-2 pl-4 text-color hover:surface-200 border-noround" @click="logout">
                         <i class="pi pi-power-off" />
                         <span class="custom-margin">Cerrar Sesión</span>
                     </button>
-                </router-link>
             </template>
         </Menubar>
     </div>
@@ -49,9 +47,19 @@
         },
         {
             label: 'Participaciones ',
-            icon: 'pi pi-fw pi-file'
+            icon: 'pi pi-fw pi-file',
+            command: () => router.push('/prof/part')
         }
     ]);
+
+    const logout = () => {
+    // Implement your logout logic here
+    // Clear the access token or perform any other necessary actions
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('dni');
+        localStorage.removeItem('rol');
+        router.push('/');
+    };
 </script>
 
 

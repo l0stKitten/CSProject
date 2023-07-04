@@ -41,21 +41,21 @@
         return {
             alumnos: [],
             postURL: 'http://127.0.0.1:5000',
-            config_request: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            },
+            token: localStorage.getItem('access_token')
         }
     },
     methods:{
             
             deleteAlumno(alumno){  
-                var config_request={
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*'
+                const config = {
+                    headers: {
+                        'Authorization': `Bearer ${this.token}`,
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': '*'
+                    }
                 }
                 console.log(alumno.data.dni)
-                axios.delete(this.postURL + '/alumno', {data: {dni: alumno.data.dni},  config_request })
+                axios.delete(this.postURL + '/alumno', {data: {dni: alumno.data.dni},  headers: config.headers })
                     .then(res => {                      
                         this.alumnos.splice(this.alumnos.indexOf(alumno), 1);
                         console.log(res.data);
@@ -66,7 +66,15 @@
             }
     },
     created() {
-        axios.post(this.postURL + '/alumnos')
+        const config = {
+            headers: {
+                'Authorization': `Bearer ${this.token}`,
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            }
+        };
+
+        axios.post(this.postURL + '/alumnos', null, config)
             .then((res) => { this.alumnos = res.data; })
             .catch((error) => { console.log(error) })
     }, computed: {

@@ -95,6 +95,8 @@ import AlumComUJT from './components/AlumComUJT'
 import AlumComPart from './components/AlumComPart'
 import WebCam from './components/WebCam'
 
+import ProfesorPart from './components/ProfCompPart'
+
 const routes = [
     { path: '/', component: Login },
     { path: '/admin', component: AdminiCom },
@@ -118,10 +120,12 @@ const routes = [
     { path: '/alum/config', component: AlumComConf },
     { path: '/alum/config/password', component: AlumComCofPass },
     { path: '/alum/asis', component: AlumComAsis },
-    { path: '/alum/just', component: AlumComUJT },
+    { path: '/alum/just', component: AlumComUJT},//, beforeEnter: },
     { path: '/alum/part', component: AlumComPart },
 
     { path: '/alum/asis/webcam', component: WebCam },
+
+    { path: '/prof/part', component: ProfesorPart },
   ]
 
 const router = createRouter({

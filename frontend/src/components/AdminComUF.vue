@@ -114,9 +114,13 @@
   let route = '';
   let selected = '';
 
+  const token = localStorage.getItem('access_token');
   const config_request = {
-    'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': '*'
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*'
+    }
   };
 
   const formData = ref({
@@ -194,6 +198,7 @@
 
         visible.value = false;
         resetForm();
+
     }
   }
 

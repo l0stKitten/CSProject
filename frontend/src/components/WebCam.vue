@@ -86,17 +86,31 @@ export default {
                         console.log(response.data);
                         vector = response.data
 
+                        const today = new Date();
+                    var mon = today.getUTCMonth() + 1; //months from 1-12
+                    var d = today.getUTCDate();
+                    var y = today.getUTCFullYear();
+                    this.today = new Date(`${y}-${mon}-${d}`);
+                    console.log(this.today)
+
                         const data = {
                             path: vector,
                             fecha_asistencia: this.today,
                             matricula: this.cu.codigom,
                             dni: "71218699"
                         };
+
+                        const token = localStorage.getItem('access_token')
+                        console.log(token)
+                        const config = {
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Content-Type': 'application/json',
+                                'Access-Control-Allow-Origin': '*'
+                            }
+                        };
                 
-                        axios.put(`${this.postURL}/asistencia`, data, {
-                            "Content-Type": "application/json",
-                            "Access-Control-Allow-Origin": "*"
-                        })
+                        axios.put(`${this.postURL}/asistencia`, data, config)
                             .then((res) => {
                                 console.log(res.data);
                                 if (res.data.estado){

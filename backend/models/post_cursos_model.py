@@ -48,6 +48,22 @@ class CursoModel:
             data.append(content)
             content = {}
         return data
+    
+    def get_cursos_prof(self, dni):  
+        params = {'dni' : dni}    
+        rv = self.post_pool.execute("""SELECT c.codigo, c.asignatura, a.nombre as asig_nombre, c.profesor,   
+                                            h.hora_inicio, h.hora_fin, h.dia from cursos c 
+                                            inner join profesores pr ON c.profesor = pr.dni 
+                                            inner join personas p on pr.dni = p.dni inner join asignaturas a on a.codigo = c.asignatura 
+                                            inner join horarios h on h.codigo = c.horario
+                                            where pr.dni=%(dni)s""", params)  
+        data = []
+        content = {}
+        for result in rv:
+            content = {'codigo': result[0], 'asignatura': result[1], 'asig_nombre': result[2], 'profesor': result[3], 'hora_inicio': result[4], 'hora_fin': result[5], 'dia': result[6] }
+            data.append(content)
+            content = {}
+        return data
 
     def create_curso(self, asignatura, profesor, horario):  
         data = {

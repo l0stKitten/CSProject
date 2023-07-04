@@ -11,7 +11,7 @@
         </div>
         <div class="p-field">
           <label for="password">Password</label>
-          <Password id="password" v-model="password" />
+          <Password id="password" v-model="pass" />
         </div>
         <Button label="Login" class="p-button-primary" severity="info" type="submit" />
       </div>
@@ -20,7 +20,8 @@
 </template>
 
 <script>
-  import { ref } from "vue";
+  import axios from 'axios'
+  import { useRouter } from "vue-router";
   import { InputText, Password, Button } from "primevue/inputtext";
 
   export default {
@@ -32,18 +33,39 @@
     data() {
       return {
         username: "",
-        password: "",
+        pass: "",
+        postURL: 'http://127.0.0.1:5000',
+        route: "",
+        router: useRouter()
       };
     },
     methods: {
-      login() {
-        // Implement your login logic here
-        console.log("Username:", this.username);
-        console.log("Password:", this.password);
+      check_route(rol_auth) {
+        if (rol_auth == "profesor"){
+          this.route = "/prof"
+        } else if (rol_auth == "alumno"){
+          this.route = "/alum"
+        } else if (rol_auth == "admin"){
+          this.route = "/admin"
+        }
+      },
 
-        // Reset the form after login attempt
-        this.username = "";
-        this.password = "";
+      login() {
+
+        axios.post(this.postURL + '/login', {dni: this.username, password: this.pass},  {
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': '*'
+                    } )
+            
+                .then((res) => { localStorage.setItem('access_token', res.data[0]["access"]); localStorage.setItem('dni', res.data[0]["dni"]); localStorage.setItem('rol', res.data[0]["rol"]);})
+                .catch((error) => { console.log(error) })
+
+        // Implement your login logic here        
+        this.check_route(localStorage.getItem('rol'))
+
+        console.log(localStorage.getItem('rol'))
+
+        this.router.push(this.route)
       },
     },
   };

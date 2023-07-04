@@ -40,16 +40,13 @@
                 noasis: true,
                 visible: false,
                 visible_video: false,
-                today: new Date(),
+                today: "",
                 showWebcamModal: false,
                 cursosuser: [],
                 postURL: 'http://127.0.0.1:5000',
-                config_request: {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*'
-                },
                 photo: null,
                 stream: null,
+                token: localStorage.getItem('access_token')
             }
         },
         methods: {
@@ -57,7 +54,7 @@
                 this.showWebcamModal = true;
             },
             currentDay() {
-                const today = new Date(); //comentar y usar this.today para conseguir que el usuario no pueda cambiar la fecha a su gusto
+                const today = this.today; //comentar y usar this.today para conseguir que el usuario no pueda cambiar la fecha a su gusto
                 const options = { weekday: 'long' };
                 const today_day = today.toLocaleDateString('en-US', options);
                 console.log(today_day)
@@ -84,7 +81,7 @@
                 var day_week = this.currentDay()
 
                 if (day_week === cu.dia){
-                    const today = new Date();
+                    const today = this.today;
                     const year = today.getFullYear();
                     const month = String(today.getMonth() + 1).padStart(2, "0");
                     const day = String(today.getDate()).padStart(2, "0");
@@ -92,9 +89,14 @@
                     const date1 = new Date(`${year}-${month}-${day}T${cu.hora_inicio}`);
                     const date2 = new Date(`${year}-${month}-${day}T${cu.hora_fin}`);
 
+                    var mon = today.getUTCMonth() + 1; //months from 1-12
+                    var d = today.getUTCDate();
+                    var y = today.getUTCFullYear();
+                    this.today = new Date(`${y}-${mon}-${d}`);
+
                     console.log(date1)
                     console.log(date2)
-                    console.log(today)
+                    console.log(this.today)
 
                     if (today >= date1 && today <= date2) {
                         show = true
@@ -123,10 +125,14 @@
                     const fil = new File([blob], 'captured-image.png', { type: 'image/png' });
 
                     // You can perform further processing with the captured image here
-                    var config_request = {
-                        "Content-Type": "application/json",
-                        "Access-Control-Allow-Origin": "*"
-                    };
+                    
+                    
+                    const today = this.today;
+                    var mon = today.getUTCMonth() + 1; //months from 1-12
+                    var d = today.getUTCDate();
+                    var y = today.getUTCFullYear();
+                    this.today = new Date(`${y}-${mon}-${d}`);
+                    console.log(this.today)
 
                     var data = {
                         path: fil,
@@ -134,7 +140,17 @@
                         matricula: matri
                     };
 
-                    axios.put(`${this.postURL}/asistencia`, data, config_request)
+                    const token = localStorage.getItem('access_token')
+                    console.log(token)
+                    const config = {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json',
+                            'Access-Control-Allow-Origin': '*'
+                        }
+                    };
+
+                    axios.put(`${this.postURL}/asistencia`, data, config)
                         .then((res) => {
                         console.log(res.data);
                         })
@@ -151,10 +167,14 @@
                 }
         },
         created() {
-            axios.post(this.postURL + '/cursosuser', {dni: "71218699"},  {
-                        'Content-Type': 'application/json',
-                        'Access-Control-Allow-Origin': '*'
-                    } )
+            const config = {
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                }
+            };
+            axios.post(this.postURL + '/cursosuser', {dni: localStorage.getItem('dni')}, config )
             
                 .then((res) => { this.cursosuser = res.data; })
                 .catch((error) => { console.log(error) })

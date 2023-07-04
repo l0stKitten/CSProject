@@ -46,20 +46,21 @@
         return {
             asistencias: [],
             postURL: 'http://127.0.0.1:5000',
-            config_request: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            },
+            token: localStorage.getItem('access_token')
         };
     },
     methods:{
             
         deleteAsistencia(asistencia){  
-                var config_request={
+            const config = {
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*'
                 }
-                axios.delete(this.postURL + '/asistencia', {data: {codigo: asistencia.data.codigo},  config_request })
+            }
+
+                axios.delete(this.postURL + '/asistencia', {data: {codigo: asistencia.data.codigo},  headers: config.headers })
                     .then(res => {                      
                         this.asistencias.splice(this.asistencias.indexOf(asistencia), 1);
                         console.log(res.data);
@@ -70,7 +71,15 @@
             }
     },
     created() {
-        axios.post(this.postURL + '/asistencias')
+        const config = {
+            headers: {
+                'Authorization': `Bearer ${this.token}`,
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            }
+        };
+
+        axios.post(this.postURL + '/asistencias', null, config)
             .then((res) => { this.asistencias = res.data; })
             .catch((error) => { console.log(error) })
     }, computed: {

@@ -63,14 +63,11 @@
 
     export default {
         data() {
-        return {
+          return {
             salones: [],
             postURL: 'http://127.0.0.1:5000',
-            config_request: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            },
-        };
+            token: localStorage.getItem('access_token'),
+          };
     },
     setup() {
         const visible = ref(false);
@@ -118,13 +115,16 @@
         },
         updateSalon(e) {
           //e.preventDefault();
-          var config_request = {
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*"
-          };
+          const config = {
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                }
+            }
   
           axios
-            .patch(this.postURL + '/salon', this.actualizarSalon, { config_request })
+            .patch(this.postURL + '/salon', this.actualizarSalon, { headers: config.headers })
             .then(res => {
               const index = this.salones.findIndex(salon => salon.codigo === this.actualizarSalon.codigo);
               if (index !== -1) {
@@ -140,11 +140,14 @@
           this.visible = false;
         },
         deleteSalon(salon){  
-                    var config_request={
-                        'Content-Type': 'application/json',
-                        'Access-Control-Allow-Origin': '*'
-                    }
-                    axios.delete(this.postURL + '/salon', {data: {codigo: salon.data.codigo},  config_request })
+          const config = {
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                }
+            }
+                    axios.delete(this.postURL + '/salon', {data: {codigo: salon.data.codigo},  headers: config.headers })
                         .then(res => {                      
                             this.salones.splice(this.salones.indexOf(salon), 1);
                             console.log(res.data);
@@ -155,7 +158,15 @@
                 }
     },
     created() {
-        axios.post(this.postURL + '/salones')
+      const config = {
+        headers: {
+          'Authorization': `Bearer ${this.token}`,
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
+      };
+
+        axios.post(this.postURL + '/salones', null, config )
             .then((res) => { this.salones = res.data; })
             .catch((error) => { console.log(error) })
     },

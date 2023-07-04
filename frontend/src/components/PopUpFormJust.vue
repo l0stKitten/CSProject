@@ -50,10 +50,7 @@
           justificaciones: [],
           newJustificacion: {},
           postURL: 'http://127.0.0.1:5000',
-          config_request: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
-          },
+          token: localStorage.getItem('access_token')
         };
       },
     setup() {
@@ -125,7 +122,15 @@
         },
       },
       created() {
-        axios.post(this.postURL + '/justificaciones')
+        const config = {
+            headers: {
+                'Authorization': `Bearer ${this.token}`,
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            }
+        };
+
+        axios.post(this.postURL + '/justificaciones', null, config)
           .then((res) => { this.justificaciones = res.data; })
           .catch((error) => { console.log(error) })
       },

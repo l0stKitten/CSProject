@@ -42,20 +42,20 @@
         return {
             profesores: [],
             postURL: 'http://127.0.0.1:5000',
-            config_request: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            },
+            token: localStorage.getItem('access_token'),
         };
     },
     methods:{
             
         deleteProfesor(profesor){  
-                        var config_request={
-                            'Content-Type': 'application/json',
-                            'Access-Control-Allow-Origin': '*'
-                        }
-                        axios.delete(this.postURL + '/profesor', {data: {dni: profesor.data.dni},  config_request })
+            const config = {
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                }
+            }
+                        axios.delete(this.postURL + '/profesor', {data: {dni: profesor.data.dni},  headers: config.headers })
                             .then(res => {                      
                                 this.profesores.splice(this.profesores.indexOf(profesor), 1);
                                 console.log(res.data);
@@ -66,7 +66,15 @@
                     }
             },
     created() {
-        axios.post(this.postURL + '/profesores')
+        const config = {
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                }
+            }
+
+        axios.post(this.postURL + '/profesores', null, config)
             .then((res) => { this.profesores = res.data; })
             .catch((error) => { console.log(error) })
     }, computed: {

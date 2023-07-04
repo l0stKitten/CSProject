@@ -23,14 +23,19 @@
         return {
             participaciones: [],
             postURL: 'http://127.0.0.1:5000',
-            config_request: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            },
+            token: localStorage.getItem('access_token')
         }
     },
     created() {
-        axios.post(this.postURL + '/participaciones')
+        const config = {
+            headers: {
+                'Authorization': `Bearer ${this.token}`,
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            }
+        };
+
+        axios.post(this.postURL + '/participaciones', null, config)
             .then((res) => { this.participaciones = res.data; })
             .catch((error) => { console.log(error) })
     }

@@ -37,14 +37,20 @@
         return {
             alumnos: [],
             postURL: 'http://127.0.0.1:5000',
-            config_request: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            },
+            token: localStorage.getItem('access_token')
         };
     },
     created() {
-        axios.post(this.postURL + '/alumnos')
+        const token = localStorage.getItem('access_token')
+        const config = {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            }
+        };
+
+        axios.post(this.postURL + '/alumnos', null, config)
             .then((res) => { this.alumnos = res.data; })
             .catch((error) => { console.log(error) })
     },

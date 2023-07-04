@@ -3,6 +3,7 @@ from flask import request
 from flask import jsonify
 from flask import render_template
 from flask_cors import CORS, cross_origin 
+from flask_jwt_extended import JWTManager
 
 from backend.blueprints.personas_blueprint import personas_blueprint
 from backend.blueprints.alumnos_blueprint import alumnos_blueprint
@@ -17,8 +18,10 @@ from backend.blueprints.dictados_blueprint import dictados_blueprint
 from backend.blueprints.participaciones_blueprint import participaciones_blueprint
 from backend.blueprints.asistencias_blueprint import asistencias_blueprint
 from backend.blueprints.matriculas_blueprint import matriculas_blueprint
+from backend.blueprints.authentication_blueprint import authentication_blueprint
 
 app = Flask(__name__)
+
 
 app.register_blueprint(personas_blueprint)
 app.register_blueprint(alumnos_blueprint)
@@ -33,6 +36,11 @@ app.register_blueprint(dictados_blueprint)
 app.register_blueprint(participaciones_blueprint)
 app.register_blueprint(asistencias_blueprint)
 app.register_blueprint(matriculas_blueprint)
+app.register_blueprint(authentication_blueprint)
+
+# needed for session cookies
+app.config["JWT_SECRET_KEY"] = "POMELO"
+jwt = JWTManager(app)
 
 cors = CORS(app)
 

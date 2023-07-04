@@ -16,11 +16,11 @@ class SalonModel:
         return data
 
     def get_salones(self):  
-        rv = self.post_pool.execute("SELECT * from salones")  
+        rv = self.post_pool.execute("SELECT s.codigo, s.pabellon, s.numero, CONCAT(s.pabellon, ' ', s.numero) as fullsalon from salones s")  
         data = []
         content = {}
         for result in rv:
-            content = {'codigo': result[0], 'pabellon': result[1], 'numero': result[2]}
+            content = {'codigo': result[0], 'pabellon': result[1], 'numero': result[2], 'fullsalon': result[3]}
             data.append(content)
             content = {}
         return data

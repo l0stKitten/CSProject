@@ -63,10 +63,14 @@
   
     const newTask = ref({});
     const postURL = 'http://127.0.0.1:5000';
+    const token = localStorage.getItem('access_token')
     const config_request = {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*'
-    };
+                headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+                }
+            };
   
     const tipos = ref([
       { name: 'Alumno', code: 'al' },

@@ -21,7 +21,7 @@
                     <Button icon="pi pi-fw pi-pencil" label="" severity="warning"></Button>
                 </template>
             </Column>
-            <Column header="Eliminar"> ¿
+            <Column header="Eliminar">
                 <template #body="rowData">
                     <Button icon="pi pi-fw pi-trash" label="" severity="danger" @click="deleteAdmin(rowData)"></Button>
                 </template>
@@ -41,20 +41,21 @@
         return {
             administradores: [],
             postURL: 'http://127.0.0.1:5000',
-            config_request: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            },
+            token: localStorage.getItem('access_token')
         };
     },
     methods:{
             
         deleteAdmin(administrador){  
-                    var config_request={
-                        'Content-Type': 'application/json',
-                        'Access-Control-Allow-Origin': '*'
-                    }
-                    axios.delete(this.postURL + '/administrador', {data: {dni: administrador.data.dni},  config_request })
+            const config = {
+                headers: {
+                'Authorization': `Bearer ${this.token}`,
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+                }
+            };
+
+                    axios.delete(this.postURL + '/administrador', {data: {dni: administrador.data.dni}, headers: config.headers })
                         .then(res => {                      
                             this.administradores.splice(this.administradores.indexOf(administrador), 1);
                             console.log(res.data);
@@ -65,7 +66,15 @@
                 }
         },
     created() {
-        axios.post(this.postURL + '/administradores')
+        const token = localStorage.getItem('access_token');
+        const config = {
+            headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+            }
+        };
+        axios.post(this.postURL + '/administradores', null, config)
             .then((res) => { this.administradores = res.data; })
             .catch((error) => { console.log(error) })
     }, computed: {

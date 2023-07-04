@@ -36,20 +36,20 @@
         return {
             matriculas: [],
             postURL: 'http://127.0.0.1:5000',
-            config_request: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            },
+            token: localStorage.getItem('access_token')
         };
     },
     methods:{
             
             deleteMatricula(matricula){  
-                var config_request={
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*'
+                const config = {
+                    headers: {
+                        'Authorization': `Bearer ${this.token}`,
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': '*'
+                    }
                 }
-                axios.delete(this.postURL + '/matricula', {data: {codigo: matricula.data.codigo},  config_request })
+                axios.delete(this.postURL + '/matricula', {data: {codigo: matricula.data.codigo}, headers: config.headers})
                     .then(res => {                      
                         this.matriculas.splice(this.matriculas.indexOf(matricula), 1);
                         console.log(res.data);
@@ -60,7 +60,15 @@
             }
     },
     created() {
-        axios.post(this.postURL + '/matriculas')
+        const config = {
+            headers: {
+                'Authorization': `Bearer ${this.token}`,
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            }
+        };
+
+        axios.post(this.postURL + '/matriculas', null, config)
             .then((res) => { this.matriculas = res.data; })
             .catch((error) => { console.log(error) })
     },

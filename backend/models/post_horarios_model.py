@@ -16,11 +16,11 @@ class HorarioModel:
         return data
 
     def get_horarios(self):  
-        rv = self.post_pool.execute("SELECT * from horarios")  
+        rv = self.post_pool.execute("SELECT h.codigo, h.hora_inicio, h.hora_fin, h.dia, CONCAT(h.dia, ' ', h.hora_inicio, ' - ', h.hora_fin) as fullhorario from horarios h")  
         data = []
         content = {}
         for result in rv:
-            content = {'codigo': result[0], 'hora_inicio': result[1], 'hora_fin': result[2], 'dia': result[3]}
+            content = {'codigo': result[0], 'hora_inicio': result[1], 'hora_fin': result[2], 'dia': result[3], 'fullhorario': result[4]}
             data.append(content)
             content = {}
         return data

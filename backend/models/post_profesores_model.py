@@ -17,12 +17,12 @@ class ProfesorModel:
         return data
 
     def get_profesores(self):  
-        rv = self.post_pool.execute("SELECT p.dni, p.nombres, p.apellido_paterno, p.apellido_materno, p.fecha_nacimiento, p.correo_institucional, p2.especialidad from personas p inner join profesores p2 on p2.dni = p.dni")  
+        rv = self.post_pool.execute("SELECT p.dni, p.nombres, p.apellido_paterno, p.apellido_materno, p.fecha_nacimiento, p.correo_institucional, p2.especialidad, CONCAT(p.nombres, ' ', p.apellido_paterno, ' ', p.apellido_materno) as fullname from personas p inner join profesores p2 on p2.dni = p.dni")  
         data = []
         content = {}
         for result in rv:
             content = {'dni': result[0], 'nombres': result[1], 'apellido_paterno': result[2], 'apellido_materno': result[3], 
-                         'fecha_nacimiento': result[4],  'correo_institucional': result[5],  'especialidad': result[6]}
+                         'fecha_nacimiento': result[4],  'correo_institucional': result[5],  'especialidad': result[6],  'fullname': result[7]}
             data.append(content)
             content = {}
         return data

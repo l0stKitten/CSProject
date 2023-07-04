@@ -27,6 +27,25 @@ class AlumnoModel:
             content = {}
         return data
 
+    def get_alumnos_curso(self, codigo, fecha):  
+        params = {'codig' : codigo, 'fecha': fecha}  
+        rv = self.post_pool.execute('''SELECT p.dni, p.nombres, p.apellido_paterno, p.apellido_materno, p.fecha_nacimiento, p.correo_institucional, ass.codigo from personas p 
+                                    inner join alumnos a on a.dni = p.dni 
+                                    inner join matriculas m on m.alumno = a.dni
+                                    inner join cursos cur on cur.codigo = m.curso
+                                    inner join asistencias ass on ass.matricula = m.codigo
+                                    where cur.codigo=%(codig)s and ass.estado=true and ass.fecha_asistencia=%(fecha)s''', params)  
+        data = []
+        content = {}
+        for result in rv:
+            content = {'dni': result[0], 'nombres': result[1], 'apellido_paterno': result[2], 'apellido_materno': result[3], 
+                         'fecha_nacimiento': result[4],  'correo_institucional': result[5],  'asistencia': result[6],  'number': 0}
+            data.append(content)
+            content = {}
+        
+        print(data)
+        return data
+
     def create_alumno(self, dni):    
         data = {
             'dni' : dni

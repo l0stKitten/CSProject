@@ -1,4 +1,5 @@
 from backend.models.post_connection_pool import PostgreSQLPool
+from backend.models.post_personas_model import PersonaModel
 import cv2
 import numpy as np
 import requests
@@ -50,16 +51,15 @@ class AsistenciaModel:
         res = path
         vector1 = res["result"].replace('[', '').replace(']', '').split()
         vector11 = [float(numeric_string) for numeric_string in vector1]
-        print("vector 11 ", vector11)
+        #print("vector 11 ", vector11)
 
         #llamamos para obtener el vector del alumno ya guardado
-        endpoint_url = "http://127.0.0.1:5000/persona"
-        vec2 = requests.post(endpoint_url, json={"dni": dni})
-        res2 = vec2.json()
-        vect2 = res2[0]
-        vector2 = vect2["vector"].replace('[', '').replace(']', '').split()
+        persona = PersonaModel()
+        info = persona.get_persona(dni)
+        vec2 = info[0]["vector"]
+        vector2 = vec2.replace('[', '').replace(']', '').split()
         vector22 = [float(numeric_string) for numeric_string in vector2]
-        print("vector 22 ",vector22)
+        #print("vector 22 ",vector22)
         #comparar la imagen con la del guardado
         distancia = np.linalg.norm(np.array(vector11) - np.array(vector22))
 
@@ -77,6 +77,7 @@ class AsistenciaModel:
         if estado == True:
             query = """insert into asistencias (estado, fecha_asistencia, matricula) values (%(estado)s, %(fecha_asistencia)s, %(matricula)s)"""    
             cursor = self.post_pool.execute(query, data, commit=True)  
+            print(data)
         return data
 
     def update_asistencia(self, codigo_asistencia, estado, fecha_asistencia, matricula):    

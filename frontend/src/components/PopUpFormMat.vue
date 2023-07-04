@@ -92,12 +92,15 @@
       },
       methods: {
         createMatricula() {
-          var config_request = {
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*"
-          };
+          const config = {
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                }
+            }
           axios
-            .put(this.postURL + "/matricula", this.formData, { headers: config_request })
+            .put(this.postURL + "/matricula", this.formData, { headers: config.headers })
             .then(res => {
               this.matriculas.push(res.data);
               console.log(res.data);
@@ -111,15 +114,22 @@
         },
       },
       created() {
-        axios.post(this.postURL + '/matriculas')
+        const config = {
+            headers: {
+                'Authorization': `Bearer ${this.token}`,
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            }
+        };
+        axios.post(this.postURL + '/matriculas', null, config)
           .then((res) => { this.matriculas = res.data; })
           .catch((error) => { console.log(error) })
 
-        axios.post(this.postURL + '/alumnos')
+        axios.post(this.postURL + '/alumnos', null, config)
           .then((res) => { this.alumnos = res.data; })
           .catch((error) => { console.log(error) })
         
-        axios.post(this.postURL + '/cursos')
+        axios.post(this.postURL + '/cursos', null, config)
           .then((res) => { this.cursos = res.data; })
           .catch((error) => { console.log(error) })
         

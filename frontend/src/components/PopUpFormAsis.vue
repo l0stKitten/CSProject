@@ -49,10 +49,7 @@
           asistencias: [],
           newAsistencia: {},
           postURL: 'http://127.0.0.1:5000',
-          config_request: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
-          },
+          token: localStorage.getItem('access_token')
         };
       },
     setup() {
@@ -106,12 +103,15 @@
       },
       methods: {
         createAsistencia() {
-          var config_request = {
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*"
-          };
+          const config = {
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                }
+            }
           axios
-            .put(this.postURL + "/asistencia", this.formData, { headers: config_request })
+            .put(this.postURL + "/asistencia", this.formData, { headers: config.headers })
             .then(res => {
               this.asistencias.push(res.data);
               console.log(res.data);

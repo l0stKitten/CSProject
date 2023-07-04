@@ -40,20 +40,20 @@
         return {
             cursos: [],
             postURL: 'http://127.0.0.1:5000',
-            config_request: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            },
+            token: localStorage.getItem('access_token')
         };
     },
     methods:{
             
         deleteCurso(curso){  
-                    var config_request={
-                        'Content-Type': 'application/json',
-                        'Access-Control-Allow-Origin': '*'
-                    }
-                    axios.delete(this.postURL + '/curso', {data: {codigo: curso.data.codigo},  config_request })
+            const config = {
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                }
+            }
+                    axios.delete(this.postURL + '/curso', {data: {codigo: curso.data.codigo}, headers: config.headers})
                         .then(res => {                      
                             this.cursos.splice(this.cursos.indexOf(curso), 1);
                             console.log(res.data);
@@ -64,7 +64,16 @@
                 }
         },
     created() {
-        axios.post(this.postURL + '/cursos')
+        const token = localStorage.getItem('access_token')
+        const config = {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            }
+        };
+
+        axios.post(this.postURL + '/cursos', null, config )
             .then((res) => { this.cursos = res.data; })
             .catch((error) => { console.log(error) })
     }
